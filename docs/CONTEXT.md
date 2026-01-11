@@ -20,12 +20,10 @@
 
 ## Next Steps
 
-1. **User Action Required**:
-   - Create Supabase Project and update `src/js/config/supabase.js`.
-   - Create Firebase Project and update `src/js/config/firebase.js`.
-   - Add Anthropic Key (securely).
-2. **Testing**: Run `scripts/run.sh` to launch local server.
-3. **Future**: Implement real PDF/DOCX generation libraries.
+1. **User runs**: `./scripts/configure.sh` to see what's needed
+2. **User follows**: `QUICK_START.md` to add API keys
+3. **User runs**: `./scripts/run.sh` to start app
+4. **Testing begins**: User can now test the full application flow
 
 ## Notes
 

@@ -30,6 +30,18 @@ Resume_Builder is a web-based application designed to help users create professi
 ./scripts/test.sh
 ```
 
+## Configuration Checklist
+
+Before running the application, you need to configure:
+
+- [ ] Supabase (Auth & Database)
+- [ ] Firebase (Hosting)
+- [ ] Anthropic API (AI Processing)
+
+Run `./scripts/configure.sh` to see configuration instructions.
+
+See `QUICK_START.md` for detailed setup guide.
+
 ## Architecture
 
 - **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+).
