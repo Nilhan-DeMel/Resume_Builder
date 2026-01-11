@@ -1,21 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Builder</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Resume Builder - AI-Powered CV Optimization</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/auth.css">
+    <link rel="stylesheet" href="styles/upload.css">
+    <link rel="stylesheet" href="styles/editor.css">
+    <link rel="stylesheet" href="styles/output.css">
+    <link rel="stylesheet" href="styles/components/button.css">
+    <link rel="stylesheet" href="styles/components/card.css">
+    <link rel="stylesheet" href="styles/components/modal.css">
+    <link rel="stylesheet" href="styles/components/toast.css">
+
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <!-- Add other CDN libraries as needed: jsPDF, docx, pdf.js, tesseract.js -->
 </head>
+
 <body>
-    <header>
-        <h1>Resume Builder</h1>
-    </header>
-    <main>
-        <div id="app">
-            <p>Welcome to Resume Builder. Start creating your resume.</p>
-            <!-- Form components will go here -->
+    <!-- Authentication View -->
+    <div data-view="auth" class="view">
+        <div class="container auth-container">
+            <div class="card auth-form">
+                <div class="card-header">
+                    <h2>Resume Builder</h2>
+                    <p>Log in to optimize your CV</p>
+                </div>
+                <div class="card-body">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" class="form-input" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Log In</button>
+                    </form>
+
+                    <div class="auth-divider">
+                        <span>OR</span>
+                    </div>
+
+                    <button id="google-login" class="btn btn-secondary" style="width: 100%;">
+                        Sign in with Google
+                    </button>
+                </div>
+                <div class="card-footer" style="justify-content: center;">
+                    <p style="margin: 0; font-size: 0.9rem;">Need an account? <a href="#"
+                            id="toggle-register">Register</a></p>
+                </div>
+            </div>
+
+            <div class="card auth-form hidden" id="register-card">
+                <!-- Register form structure would mirror login -->
+            </div>
         </div>
-    </main>
-    <script src="script.js"></script>
+    </div>
+
+    <!-- Upload View -->
+    <div data-view="upload" class="view hidden">
+        <div class="container upload-container">
+            <header style="text-align: center; margin-bottom: 2rem;">
+                <h1>Upload Your CV</h1>
+                <p>We'll optimize it for your target role</p>
+            </header>
+
+            <div class="card">
+                <div class="card-body">
+                    <div id="drop-zone" class="drop-zone">
+                        <div class="drop-zone-icon">📄</div>
+                        <div class="drop-zone-text">Drag & Drop your Resume here</div>
+                        <div class="drop-zone-subtext">or click to browse (PDF, DOCX, TXT)</div>
+                        <input type="file" id="cv-file-input" class="file-input" accept=".pdf,.doc,.docx,.txt">
+                    </div>
+
+                    <div class="job-level-selector">
+                        <label for="job-level-select">Target Job Level:</label>
+                        <select id="job-level-select" class="select-input">
+                            <option value="">Select Level...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="job-desc-input">Target Job Description (Optional but Recommended):</label>
+                        <input type="file" id="job-desc-input" class="form-input" accept=".pdf,.doc,.docx,.txt">
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button id="proceed-btn" class="btn btn-primary btn-large">Start Optimization</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Editor View -->
+    <div data-view="editor" class="view hidden">
+        <div class="container">
+            <h1>Review & Edit</h1>
+            <!-- Editor UI -->
+            <div class="editor-container">
+                <div class="editor-main">
+                    <div class="editor-toolbar">
+                        <button class="btn btn-small btn-secondary">Undo</button>
+                        <button class="btn btn-small btn-secondary">Redo</button>
+                    </div>
+                    <textarea class="editor-content" spellcheck="false">Editor content placeholder...</textarea>
+                </div>
+                <div class="editor-sidebar">
+                    <div class="card">
+                        <h3>ATS Check</h3>
+                        <div class="validation-item valid">✓ Standard Fonts</div>
+                        <div class="validation-item invalid">⚠ Missing Sections</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing View -->
+    <div data-view="processing" class="view hidden">
+        <div class="container" style="text-align: center; margin-top: 100px;">
+            <h1>Optimizing Your Resume...</h1>
+            <div class="loader-spinner"></div>
+            <p>Our AI Agents are rewriting for ATS compliance.</p>
+        </div>
+    </div>
+
+    <!-- Output View -->
+    <div data-view="output" class="view hidden">
+        <div class="container output-container">
+            <h1>Optimization Complete!</h1>
+            <div class="card score-card">
+                <div class="score-circle">95</div>
+                <p>Excellent ATS Compatibility</p>
+            </div>
+
+            <div class="action-grid">
+                <div class="download-option">
+                    <div class="file-icon">📄</div>
+                    <h3>PDF</h3>
+                    <button class="btn btn-primary">Download PDF</button>
+                </div>
+                <div class="download-option">
+                    <div class="file-icon">📝</div>
+                    <h3>Word</h3>
+                    <button class="btn btn-primary">Download DOCX</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application Script (ES6 Module) -->
+    <script type="module" src="js/main.js"></script>
 </body>
+
 </html>

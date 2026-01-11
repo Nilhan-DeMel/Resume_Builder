@@ -1,0 +1,37 @@
+{
+    "atsRules": {
+        "formatting": {
+            "avoidTables": true,
+            "avoidTextBoxes": true,
+            "avoidHeaders": true,
+            "avoidFooters": true,
+            "useStandardFonts": true,
+            "avoidGraphics": true
+        },
+        "structure": {
+            "clearSections": true,
+            "standardHeadings": [
+                "Experience",
+                "Education",
+                "Skills",
+                "Summary"
+            ],
+            "chronologicalOrder": true,
+            "consistentDateFormat": true
+        },
+        "content": {
+            "useKeywords": true,
+            "avoidAcronymsWithoutDefinition": false,
+            "quantifyAchievements": true,
+            "includeRelevantSkills": true
+        },
+        "fileFormat": {
+            "preferredFormats": [
+                "docx",
+                "pdf"
+            ],
+            "avoidScannedImages": true,
+            "useSelectableText": true
+        }
+    }
+}

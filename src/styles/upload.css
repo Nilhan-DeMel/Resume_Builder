@@ -1,0 +1,62 @@
+/**
+ * Upload View Styles
+ * Purpose: Upload interface and drag-drop zone styling
+ */
+
+.upload-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.drop-zone {
+    border: 2px dashed rgba(99, 102, 241, 0.3);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    text-align: center;
+    transition: all 0.3s ease;
+    background: rgba(99, 102, 241, 0.05);
+    cursor: pointer;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-active {
+    border-color: var(--color-primary);
+    background: rgba(99, 102, 241, 0.1);
+    transform: scale(1.01);
+}
+
+.drop-zone-icon {
+    font-size: 3rem;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.drop-zone-text {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-sm);
+}
+
+.drop-zone-subtext {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+.file-input {
+    display: none;
+}
+
+.job-level-selector {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.select-input {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--color-surface);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: var(--border-radius);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-base);
+    margin-top: var(--spacing-sm);
+}

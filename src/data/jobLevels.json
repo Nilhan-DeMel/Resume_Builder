@@ -1,0 +1,22 @@
+{
+  "jobLevels": [
+    {
+      "id": "junior_executive",
+      "label": "Junior Executive",
+      "description": "Entry to mid-level professional roles",
+      "optimizationFocus": "Skills development, achievements, potential, adaptability"
+    },
+    {
+      "id": "senior_manager",
+      "label": "Senior Manager",
+      "description": "Leadership and management positions",
+      "optimizationFocus": "Leadership experience, team management, strategic initiatives, measurable results"
+    },
+    {
+      "id": "c_suite",
+      "label": "C-Suite / Executive",
+      "description": "C-level and executive leadership",
+      "optimizationFocus": "Executive presence, business impact, vision, strategic leadership, P&L responsibility"
+    }
+  ]
+}
