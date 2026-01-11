@@ -4,7 +4,7 @@
 
 ## Overview
 
-Resume_Builder is a web-based application designed to help users create professional resumes. It is built with a unique constraint: **no human directly modifies this code**. All development is handled by stateless AI agents who "fly in," understand the context from this repository, make improvements, and "fly out."
+Resume_Builder is a web-based application designed to help users create professional resumes. It is built with a unique constraint: **No human manually edits or merges code changes; agents perform all repo modifications.** All development is handled by stateless AI agents who "fly in," understand the context from this repository, make improvements, and "fly out."
 
 ## Status
 
@@ -61,7 +61,7 @@ Then open <http://localhost:8000> in your browser.
 The application includes a demo mode for testing without API keys:
 
 1. Ensure `DEMO_MODE = true` in `src/js/config/demo.js` (default)
-2. Run `./scripts/run.sh`
+2. Run `.\scripts\run.ps1` (Windows) or `./scripts/run.sh` (Mac/Linux)
 3. Test the full UI workflow with mock data
 
 See `QUICK_START.md` for details.
@@ -94,7 +94,7 @@ Before running the application, you need to configure:
 - [ ] Firebase (Hosting)
 - [ ] Anthropic API (AI Processing)
 
-Run `./scripts/configure.sh` to see configuration instructions.
+Run `.\scripts\configure.ps1` (Windows) or `./scripts/configure.sh` (Mac/Linux) to see configuration instructions.
 
 See `QUICK_START.md` for detailed setup guide.
 
