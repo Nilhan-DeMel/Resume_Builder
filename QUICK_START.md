@@ -16,6 +16,14 @@ This application uses ES6 modules which require a web server. You cannot simply 
 
 We've made this easy for you:
 
+**Windows (PowerShell):**
+
+```powershell
+.\scripts\run.ps1
+```
+
+**Mac/Linux (Bash):**
+
 ```bash
 ./scripts/run.sh
 ```
@@ -60,6 +68,14 @@ When ready for real API processing, set `DEMO_MODE = false` and follow the setup
 
 ### Step 1: Run Configuration Helper
 
+**Windows:**
+
+```powershell
+.\scripts\configure.ps1
+```
+
+**Mac/Linux:**
+
 ```bash
 ./scripts/configure.sh
 ```
@@ -99,6 +115,14 @@ When ready for real API processing, set `DEMO_MODE = false` and follow the setup
 **Detailed instructions:** See `docs/API_INTEGRATION.md`
 
 ### Step 5: Run Application
+
+**Windows:**
+
+```powershell
+.\scripts\run.ps1
+```
+
+**Mac/Linux:**
 
 ```bash
 ./scripts/run.sh

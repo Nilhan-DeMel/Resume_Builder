@@ -18,6 +18,14 @@ Resume_Builder is a web-based application designed to help users create professi
 
 ### Quick Start
 
+**Windows (PowerShell):**
+
+```powershell
+.\scripts\run.ps1
+```
+
+**Mac/Linux (Bash):**
+
 ```bash
 ./scripts/run.sh
 ```
@@ -60,12 +68,21 @@ See `QUICK_START.md` for details.
 
 ```bash
 # Setup (first time only)
+# Windows:
+.\scripts\setup.ps1
+# Mac/Linux:
 ./scripts/setup.sh
 
 # Run the application
+# Windows:
+.\scripts\run.ps1
+# Mac/Linux:
 ./scripts/run.sh
 
 # Run tests
+# Windows:
+.\scripts\test.ps1
+# Mac/Linux:
 ./scripts/test.sh
 ```
 
