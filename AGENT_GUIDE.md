@@ -64,6 +64,23 @@ Every agent session must complete ALL of these before departure:
 - **Decisions**: If you make an architectural decision, log it in `docs/CONTEXT.md` or a dedicated `docs/decisions/` file if complex.
 - **Deletions**: Never delete without explanation in the CHANGELOG.
 
+## Bug Fix Mode
+
+When arriving specifically to fix a bug:
+
+1. **Read `docs/ISSUES.md` first** - Find your issue number
+2. **Follow `docs/AGENT_BUG_FIX_PROTOCOL.md`** - Complete workflow
+3. **Make minimal changes** - Fix only what's broken
+4. **Close the issue** - Update ISSUES.md with resolution
+5. **Log everything** - CHANGELOG, CONTEXT, commit message
+
+### Bug Fix vs Feature Development
+
+- **Bug Fix**: Fix what's broken, minimal changes, close issue
+- **Feature**: Add new functionality, follows full Definition of Done
+
+For bugs, speed and precision matter more than perfection.
+
 ## Triggers & Guardrails
 
 - **> 5 Source Files**: Add linting and code style rules.
