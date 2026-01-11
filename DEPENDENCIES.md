@@ -19,7 +19,7 @@
 
 ## Version History
 
-### 2025-01-11 - Initial Setup
+### 2026-01-11 - Initial Setup
 
 - Vanilla HTML/CSS/JS, no external dependencies
 - Reason: Keep initial implementation simple and dependency-free

@@ -4,7 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [2025-01-11] - Agent Session 5
+## [2026-01-11] - Agent Session 6
+
+### Fixed
+
+- Login form event listener not attaching properly
+- Added extensive debug logging
+- Added console welcome message for demo mode
+- Corrected all dates from 2025 to 2026 (today is 2026-01-11)
+
+## [2026-01-11] - Agent Session 5
 
 ### Added
 
@@ -18,7 +27,7 @@ All notable changes to this project will be documented in this file.
 - Updated apiClient.js to support demo mode
 - Updated supabase.js to support demo mode
 
-## [2025-01-11] - Agent Session 4
+## [2026-01-11] - Agent Session 4
 
 ### Added
 
