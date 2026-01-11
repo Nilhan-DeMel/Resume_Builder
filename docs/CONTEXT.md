@@ -5,27 +5,29 @@
 
 ## Current State
 
-Phase 1 foundation complete and hardened.
+Phase 1 foundation complete and hardened. Architecture planning complete.
 
 - Scripts enhanced with strict error handling and validation
 - Operational infrastructure stable
 - Dependency tracking standardized
+- Architecture and File Structure documented
 
 ## Recent Decisions
 
-- **Architecture**: Pure client-side web application (HTML/CSS/JS) for start.
-- **Process**: Adopted strictly stateless agent workflow.
-- **Scripts**: Enforced `set -euo pipefail` to prevent silent failures.
+- **Architecture**: Micro-modular file structure for AI-friendliness.
+- **Tech Stack**: Vanilla JS + Supabase (Auth/DB/Storage) + Firebase (Hosting) + Claude API.
+- **Process**: Strictly sequential implementation plan (Phases 1-13).
 
 ## Next Steps
 
-1. Begin building core resume builder functionality in src/
-2. Start with basic form for user input (name, contact, experience)
-3. Add data structure for storing resume data
+1. Begin Phase 2: Foundation Setup (Config, Utils, State).
+2. Create configuration files (Supabase, Firebase, API).
+3. Implement state management modules.
 
 ## Notes
 
-Repository now has all Phase 1 infrastructure. Ready for feature development.
+- Micro-modular structure planned.
+- Repository now has all Phase 1 infrastructure. Ready for feature development.
 
 ## Blockers / Issues
 
