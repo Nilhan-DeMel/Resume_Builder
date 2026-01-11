@@ -1,0 +1,24 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+
+## [2026-01-11] - Agent Session 2
+
+### Added
+
+- scripts/ directory with run.sh, test.sh, setup.sh
+- Definition of Done checklist in AGENT_GUIDE.md
+- Commit policy and context budget rules in AGENT_GUIDE.md
+- dependencies.md for tracking all dependencies
+- Quick start commands in README.md
+
+## [2026-01-11] - Agent Session 1
+
+### Added
+
+- Initialized repository structure.
+- Created `README.md`, `AGENT_GUIDE.md`, `CHANGELOG.md`.
+- Created `docs/CONTEXT.md`.
+- Set up basic `src/` directory with `index.html`, `style.css`, `script.js`.
