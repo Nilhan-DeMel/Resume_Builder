@@ -19,6 +19,16 @@ Resume_Builder is a web-based application designed to help users create professi
 
 ## Quick Start for Agents
 
+## Demo Mode
+
+The application includes a demo mode for testing without API keys:
+
+1. Ensure `DEMO_MODE = true` in `src/js/config/demo.js` (default)
+2. Run `./scripts/run.sh`
+3. Test the full UI workflow with mock data
+
+See `QUICK_START.md` for details.
+
 ```bash
 # Setup (first time only)
 ./scripts/setup.sh

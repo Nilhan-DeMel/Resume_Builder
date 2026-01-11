@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2025-01-11] - Agent Session 5
+
+### Added
+
+- Demo mode configuration (src/js/config/demo.js)
+- Mock API responses for testing without keys
+- Mock Supabase auth for testing without setup
+- Demo mode instructions in QUICK_START.md and README.md
+
+### Changed
+
+- Updated apiClient.js to support demo mode
+- Updated supabase.js to support demo mode
+
 ## [2025-01-11] - Agent Session 4
 
 ### Added

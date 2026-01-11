@@ -20,10 +20,15 @@
 
 ## Next Steps
 
-1. **User runs**: `./scripts/configure.sh` to see what's needed
-2. **User follows**: `QUICK_START.md` to add API keys
-3. **User runs**: `./scripts/run.sh` to start app
-4. **Testing begins**: User can now test the full application flow
+## Next Steps
+
+1. **Test Demo Mode** (No API keys needed):
+   - User runs `./scripts/run.sh`
+   - User tests UI with mock data
+2. **Switch to Real APIs** (When ready):
+   - User follows `QUICK_START.md` to add API keys
+   - User sets `DEMO_MODE = false` in `src/js/config/demo.js`
+3. **Full Testing**: Test with real CV optimization
 
 ## Notes
 

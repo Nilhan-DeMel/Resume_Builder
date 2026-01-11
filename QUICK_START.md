@@ -8,6 +8,22 @@
 
 ## Setup (5 minutes)
 
+### Demo Mode (Try Without API Keys!)
+
+Want to test the UI before setting up API keys? The app includes a demo mode!
+
+1. Make sure `DEMO_MODE = true` in `src/js/config/demo.js` (it's on by default)
+2. Run `./scripts/run.sh`
+3. Open `src/index.html` in your browser
+4. Use ANY email/password to "log in" (it's mocked)
+5. Upload a sample CV and test the workflow
+
+**Demo mode uses mock responses** - the AI won't actually process your CV, but you can test the entire user interface and workflow.
+
+When ready for real API processing, set `DEMO_MODE = false` and follow the setup steps below.
+
+---
+
 ### Step 1: Run Configuration Helper
 
 ```bash
