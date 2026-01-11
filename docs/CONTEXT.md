@@ -5,16 +5,17 @@
 
 ## Current State
 
-Phase 1 foundation complete. All core operational infrastructure in place.
+Phase 1 foundation complete and hardened.
 
-- Scripts for running, testing, and setup created
-- Agent workflow formalized with Definition of Done
-- Dependency tracking initialized
+- Scripts enhanced with strict error handling and validation
+- Operational infrastructure stable
+- Dependency tracking standardized
 
 ## Recent Decisions
 
 - **Architecture**: Pure client-side web application (HTML/CSS/JS) for start.
 - **Process**: Adopted strictly stateless agent workflow.
+- **Scripts**: Enforced `set -euo pipefail` to prevent silent failures.
 
 ## Next Steps
 

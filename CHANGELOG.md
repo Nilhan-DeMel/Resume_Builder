@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2026-01-11] - Agent Session 3
+
+### Changed
+
+- Added error handling (set -euo pipefail) to all scripts
+- Added validation check to run.sh
+- Renamed dependencies.md → DEPENDENCIES.md for consistency
+- Added version history tracking to DEPENDENCIES.md
+
 ## [2026-01-11] - Agent Session 2
 
 ### Added
