@@ -22,8 +22,6 @@ All infrastructure in place. Application runs correctly on local development ser
 
 ## Next Steps
 
-## Next Steps
-
 1. User runs: `./scripts/run.sh`
 2. User opens: <http://localhost:8000>
 3. User tests: Full demo mode workflow

@@ -34,9 +34,10 @@ When reporting an issue for a stateless agent to fix:
 
 ### Issue #1
 
-**Status**: Open
+**Status**: Closed
 **Priority**: Critical
 **Reported**: 2026-01-11
+**Resolved**: 2026-01-11
 
 **Problem Description**:
 Login form does not submit in demo mode. No errors shown, button click has no effect.
@@ -59,7 +60,7 @@ Login form does not submit in demo mode. No errors shown, button click has no ef
 ES6 module loading issue. Modules may not be loading properly from index.html.
 
 **Resolution**:
-[To be filled by agent who fixes this]
+Fixed by updating index.html to handle ES6 module loading correctly and ensuring the application is run via a local web server (run.sh).
 
 ### Issue #2
 
