@@ -8,6 +8,40 @@
 
 ## Setup (5 minutes)
 
+## Important: Development Server Required
+
+This application uses ES6 modules which require a web server. You cannot simply open `index.html` as a file.
+
+### Running the Development Server
+
+We've made this easy for you:
+
+```bash
+./scripts/run.sh
+```
+
+This script will automatically:
+
+- Detect if you have Python or Node.js installed
+- Start a local web server on port 8000
+- Give you the URL to open
+
+Then open in your browser: **<http://localhost:8000>**
+
+### If You Don't Have Python or Node.js
+
+**Install Python** (easiest):
+
+- Windows: <https://www.python.org/downloads/>
+- Mac: Already installed (try `python3 --version`)
+- Linux: Already installed (try `python3 --version`)
+
+**Or install Node.js**:
+
+- All platforms: <https://nodejs.org/>
+
+After installation, run `./scripts/run.sh` again.
+
 ### Demo Mode (Try Without API Keys!)
 
 Want to test the UI before setting up API keys? The app includes a demo mode!

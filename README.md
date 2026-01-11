@@ -14,8 +14,37 @@ Resume_Builder is a web-based application designed to help users create professi
 
 ## How to Run
 
-1. Open `src/index.html` in a modern web browser.
-2. No build step is currently required (Vanilla HTML/CSS/JS).
+**Important**: This app requires a web server to run (ES6 modules).
+
+### Quick Start
+
+```bash
+./scripts/run.sh
+```
+
+This will start a local development server and tell you which URL to open.
+
+**Default URL**: <http://localhost:8000>
+
+### Manual Server Start
+
+If the script doesn't work, start a server manually:
+
+**With Python 3:**
+
+```bash
+cd src
+python3 -m http.server 8000
+```
+
+**With Node.js:**
+
+```bash
+cd src
+npx http-server -p 8000
+```
+
+Then open <http://localhost:8000> in your browser.
 
 ## Quick Start for Agents
 

@@ -60,3 +60,33 @@ ES6 module loading issue. Modules may not be loading properly from index.html.
 
 **Resolution**:
 [To be filled by agent who fixes this]
+
+### Issue #2
+
+**Status**: Closed
+**Priority**: Critical
+**Reported**: 2026-01-11
+**Resolved**: 2026-01-11
+
+**Problem Description**:
+Application shows "Failed to Load Application" error when opening src/index.html directly.
+
+**How to Reproduce**:
+
+1. Open src/index.html directly in browser (file:// protocol)
+2. See error: "Failed to fetch dynamically imported module"
+
+**Root Cause**:
+ES6 modules require HTTP/HTTPS protocol, not file:// protocol. Browser security restrictions prevent loading modules from file system.
+
+**Solution**:
+Updated scripts/run.sh to automatically start a local web server (Python or Node.js) so modules load correctly.
+
+**Affected Files**:
+
+- scripts/run.sh
+- docs/QUICK_START.md
+- README.md
+
+**Resolution**:
+Updated run.sh to detect and start appropriate web server. Added clear documentation about server requirement.

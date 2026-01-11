@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2026-01-11] - Agent Session 8
+
+### Fixed
+
+- Issue #2: ES6 module loading requires web server
+- Updated scripts/run.sh to auto-start local development server
+- Added server requirement documentation
+
+### Changed
+
+- Enhanced run.sh with Python/Node.js detection
+- Updated QUICK_START.md with server setup instructions
+- Updated README.md with server requirement details
+
 ## [2026-01-11] - Agent Session 7
 
 ### Added
