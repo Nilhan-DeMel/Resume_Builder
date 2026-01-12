@@ -1,0 +1,30 @@
+name: CI Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  stateless-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+            node-version: '18'
+      
+      - name: Make Scripts Executable
+        run: chmod +x scripts/*.sh
+
+      - name: Validate Environment
+        run: ./scripts/validate-environment.sh
+
+      - name: Validate Config
+        run: ./scripts/validate-config.sh
+
+      - name: Smoke Test
+        run: node scripts/smoke-test.js

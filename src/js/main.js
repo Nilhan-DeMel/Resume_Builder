@@ -11,6 +11,7 @@ import { appState } from './state/appState.js';
 import { DEMO_MODE } from './config/demo.js';
 import { logWelcome } from './utils/logger.js';
 import { initPromptBuilderData } from './ai/promptBuilder.js';
+import { errorLogger } from './utils/errorLogger.js';
 
 /**
  * Initialize application
@@ -19,10 +20,10 @@ async function initApp() {
     logWelcome();
     console.log('========================================');
     console.log('Initializing Resume_Builder...');
-    console.log('Demo Mode:', DEMO_MODE);
     console.log('========================================');
 
-    // ... existing code ...
+    // Boot Marker for Smoke Tests
+    console.log('[BOOT] main.js executed');
 
     try {
         // Initialize AI module data
@@ -36,9 +37,9 @@ async function initApp() {
         // Initialize all views
         console.log('Step 2: Initializing views...');
         initAuthView();
-        console.log('  ✓ Auth view initialized');
-
         initUploadView();
+
+        console.log('  ✓ Auth view initialized');
         console.log('  ✓ Upload view initialized');
 
         // TODO: Initialize other views
@@ -54,10 +55,16 @@ async function initApp() {
         console.log('========================================');
         console.log('✓ Resume_Builder initialized successfully');
         console.log('========================================');
+
+        if (DEMO_MODE) {
+            console.log('Demo Mode:', DEMO_MODE);
+        }
+
     } catch (error) {
         console.error('========================================');
         console.error('❌ Failed to initialize app:', error);
         console.error('========================================');
+        errorLogger.log(error, 'Boot');
         appState.setError('Failed to start application. Please refresh the page.');
     }
 }

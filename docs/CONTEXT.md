@@ -1,4 +1,16 @@
-# Project Context
+```
+# Project---
+current_branch: chore/stateless-proofpack-task-023b
+active_issues: []
+blockers: []
+last_known_good_commit: b18724a (Fix boot)
+demo_mode: true
+environment_assumptions:
+  - python3 or node
+  - port 8000
+---
+
+# Context
 
 **Current State**: Phase 1 foundation complete. All core operational infrastructure in place.
 **Last Updated**: 2026-01-11

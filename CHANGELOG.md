@@ -70,8 +70,9 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Added error handling (set -euo pipefail) to all scripts
-- Added validation check to run.sh
+- **TASK-023B**: "Ruthless Proof Pack" (CI, Error Logs, Helpers, Strict Validators).
+- **TASK-023**: Stage-1 Stateless Repo scaffolding (Docs, Validation Scripts, Smoke Test).
+- Added error handling to all scripts.
 - Renamed dependencies.md → DEPENDENCIES.md for consistency
 - Added version history tracking to DEPENDENCIES.md
 

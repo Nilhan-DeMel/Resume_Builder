@@ -1,36 +1,40 @@
 # Validate Environment (PowerShell)
-Write-Host "Starting Environment Validation..." -ForegroundColor Cyan
+$PSScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
+. "$PSScriptRoot\_lib\print.ps1"
 
-# 1. Check Runtime
+Print-Info "Step 1: Runtime Check"
+
 $python = Get-Command python -ErrorAction SilentlyContinue
 $python3 = Get-Command python3 -ErrorAction SilentlyContinue
 $node = Get-Command node -ErrorAction SilentlyContinue
 
-if ($python3) { Write-Host "✅ Python 3 found." -ForegroundColor Green }
-elseif ($python) { Write-Host "✅ Python found." -ForegroundColor Green }
-elseif ($node) { Write-Host "✅ Node.js found." -ForegroundColor Green }
+if ($python3) { Print-Pass "Python 3 found." }
+elseif ($python) { Print-Pass "Python found." }
+elseif ($node) { Print-Pass "Node.js found." }
 else {
-    Write-Host "❌ CRITICAL: No Python or Node.js found." -ForegroundColor Red
+    Print-Fail "No Python or Node.js runtime found."
+    Print-Info "NEXT ACTION: Install Python 3.10+ or Node.js 18+."
     exit 1
 }
 
-# 2. Check Source
-if (Test-Path "src/index.html") {
-    Write-Host "✅ src/index.html found." -ForegroundColor Green
+Print-Info "Step 2: Source Check"
+if (Test-Path "$PSScriptRoot\..\src\index.html") {
+    Print-Pass "src/index.html found."
 }
 else {
-    Write-Host "❌ CRITICAL: src/index.html missing. Run from repo root." -ForegroundColor Red
+    Print-Fail "src/index.html missing."
+    Print-Info "NEXT ACTION: Run from repository root or restore files."
     exit 1
 }
 
-# 3. Check Port 8000
+Print-Info "Step 3: Port 8000 Check"
 $portInUse = Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue
 if ($portInUse) {
-    Write-Host "⚠️  WARNING: Port 8000 appears to be in use." -ForegroundColor Yellow
+    Print-Warn "Port 8000 is BUSY."
+    Print-Info "NEXT ACTION: Stop existing server or expect launch failure."
 }
 else {
-    Write-Host "✅ Port 8000 appears free." -ForegroundColor Green
+    Print-Pass "Port 8000 is FREE."
 }
 
-Write-Host "Environment OK." -ForegroundColor Cyan
 exit 0
