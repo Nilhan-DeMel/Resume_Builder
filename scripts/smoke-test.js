@@ -15,7 +15,12 @@ const CHECKS = [
     { url: '/js/main.js', contains: 'Initializing Resume_Builder', name: 'Main JS' },
     { url: '/js/config/demo.js', contains: 'DEMO_MODE', name: 'Demo Config' },
     { url: '/js/auth/login.js', contains: 'DEMO', name: 'Login Logic' },
-    { url: '/js/config/supabase.js', contains: 'supabase', name: 'Supabase Config' }
+    { url: '/js/config/supabase.js', contains: 'supabase', name: 'Supabase Config' },
+
+    // Upload View Readiness (CRITICAL)
+    { url: '/js/views/uploadView.js', contains: 'initUploadView', name: 'Upload View Module' },
+    { url: '/js/utils/constants.js', contains: 'UPLOAD', name: 'Constants' },
+    { url: '/js/main.js', contains: 'initUploadView', name: 'Main Init Upload' }
 ];
 
 let serverProcess = null;

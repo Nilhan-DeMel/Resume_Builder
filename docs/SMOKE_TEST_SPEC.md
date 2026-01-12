@@ -14,6 +14,14 @@ Verifies that the "Boot Critical" artifacts are being served correctly by the lo
 | **Login Logic** | `/js/auth/login.js` | Contains `DEMO` | Verifies bypass logic is present. |
 | **Supabase Config** | `/js/config/supabase.js` | Contains `supabase` | Verifies Supabase client config. |
 
+## Upload View Readiness (Critical)
+
+| Check Name | Target URL | Assertion Rule | Why? |
+| :--- | :--- | :--- | :--- |
+| **Upload View** | `/js/views/uploadView.js` | Contains `export` & `initUploadView` | Verifies View module is valid. |
+| **Constants** | `/js/utils/constants.js` | Contains `UPLOAD` | Verifies Route constants exist. |
+| **Main Init** | `/js/main.js` | Contains `initUploadView` | Verifies Main initializes Upload View. |
+
 ## Fail state
 
 If any check fails, the script returns exit code `1` and prints the specific failure. This prevents the pipeline from creating a PR or the user from assuming the app is broken.
