@@ -10,6 +10,7 @@ import { initUploadView } from './views/uploadView.js';
 import { appState } from './state/appState.js';
 import { DEMO_MODE } from './config/demo.js';
 import { logWelcome } from './utils/logger.js';
+import { initPromptBuilderData } from './ai/promptBuilder.js';
 
 /**
  * Initialize application
@@ -21,7 +22,13 @@ async function initApp() {
     console.log('Demo Mode:', DEMO_MODE);
     console.log('========================================');
 
+    // ... existing code ...
+
     try {
+        // Initialize AI module data
+        console.log('Step 0: Initializing AI data...');
+        await initPromptBuilderData();
+
         // Initialize router
         console.log('Step 1: Initializing router...');
         initRouter();

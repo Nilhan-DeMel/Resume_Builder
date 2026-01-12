@@ -18,4 +18,5 @@ const firebaseConfig = {
 };
 
 // Import Firebase from CDN in index.html
-export const firebaseApp = window.firebase.initializeApp(firebaseConfig);
+// export const firebaseApp = window.firebase.initializeApp(firebaseConfig);
+export const firebaseApp = null;
