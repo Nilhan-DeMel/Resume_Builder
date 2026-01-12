@@ -1,4 +1,4 @@
-# PROOF PACK - TASK-024 (Recovered)
+# PROOF PACK - TASK-024 (Recovered & Hardened)
 
 Date: 2026-01-12
 Task: Stateless Finalization (Repo, Smoke, Contract)
@@ -12,6 +12,7 @@ Task: Stateless Finalization (Repo, Smoke, Contract)
 
 [Main]
 Verified canonical branch 'main'.
+Fixed Linux permissions (chmod +x) for all scripts.
 
 ## 3. Smoke Test (Upload Ready)
 
