@@ -1,19 +1,24 @@
 ## Description
 
-[Link to Issue or Short Summary]
+[Provide a brief description of the changes]
 
 ## Changes
 
-- [ ] Change 1
-- [ ] Change 2
+- [ ] Added...
+- [ ] Changed...
+- [ ] Fixed...
 
 ## Verification
 
-- [ ] Ran `./scripts/test.ps1` (or `.sh`) and it PASSED.
-- [ ] Manual verification via `http://localhost:8000` completed.
+- [ ] Ran locally: `./scripts/test.ps1` (or `./scripts/test.sh`)
+- [ ] Verified in Demo Mode
+- [ ] Checked browser console for errors
 
 ## Documentation
 
-- [ ] `docs/` updated (if applicable).
-- [ ] `CHANGELOG.md` updated.
-- [ ] Agent Run Log file added to `docs/audit/` (if performed by Agent).
+- [ ] Updated `CHANGELOG.md`
+- [ ] Updated `docs/` if architecture changed
+
+## Issues
+
+Closes # (issue number)
