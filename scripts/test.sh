@@ -1,7 +1,13 @@
-#!/usr/bin/env bash
-set -euo pipefail
-# Single command to run all tests
-echo "Running tests..."
-# Currently no tests - will execute test framework when added
-echo "No tests yet. Add tests when core functionality exists."
-exit 0
+#!/bin/bash
+# Master Test Script
+# Runs: Environment -> Config -> Smoke
+
+set -e
+
+echo "=== Resumer_Builder Test Suite ==="
+
+./scripts/validate-environment.sh
+./scripts/validate-config.sh
+node scripts/smoke-test.js
+
+echo "=== ALL TESTS PASSED ==="

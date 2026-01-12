@@ -10,7 +10,12 @@ import { cvState } from '../state/cvState.js';
 import { navigateTo } from '../ui/router.js';
 import { VIEWS } from '../utils/constants.js';
 import { showToast } from '../ui/toast.js';
-import jobLevelsData from '../../data/jobLevels.json' assert { type: 'json' };
+
+async function loadJson(path) {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
+    return res.json();
+}
 
 /**
  * Initialize upload view
@@ -58,13 +63,19 @@ function renderJobLevelOptions(container) {
     const select = container.querySelector('#job-level-select');
     if (!select) return;
 
-    jobLevelsData.jobLevels.forEach(level => {
-        const option = document.createElement('option');
-        option.value = level.id;
-        option.textContent = level.label;
-        option.title = level.description;
-        select.appendChild(option);
-    });
+    loadJson('/data/jobLevels.json')
+        .then(data => {
+            if (!data.jobLevels || !Array.isArray(data.jobLevels)) return;
+
+            data.jobLevels.forEach(level => {
+                const option = document.createElement('option');
+                option.value = level.id;
+                option.textContent = level.label;
+                option.title = level.description;
+                select.appendChild(option);
+            });
+        })
+        .catch(err => console.error('[UploadView] jobLevels load failed:', err));
 
     select.addEventListener('change', (e) => {
         cvState.setJobLevel(e.target.value);

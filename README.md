@@ -21,12 +21,20 @@ Resume_Builder is a web-based application designed to help users create professi
 **Windows (PowerShell):**
 
 ```powershell
+# 1. Verify Environment
+.\scripts\test.ps1
+
+# 2. Run Application
 .\scripts\run.ps1
 ```
 
 **Mac/Linux (Bash):**
 
 ```bash
+# 1. Verify Environment
+./scripts/test.sh
+
+# 2. Run Application
 ./scripts/run.sh
 ```
 

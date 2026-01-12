@@ -3,8 +3,32 @@
  * Purpose: Build optimized prompts for CV rewriting
  */
 
-import atsRulesData from '../../data/atsRules.json' assert { type: 'json' };
-import jobLevelsData from '../../data/jobLevels.json' assert { type: 'json' };
+// Data cache
+let atsRulesData = null;
+let jobLevelsData = null;
+
+async function loadJson(path) {
+   const res = await fetch(path);
+   if (!res.ok) throw new Error(`Failed to load ${path}: ${res.status}`);
+   return res.json();
+}
+
+/**
+ * Initialize data for prompt builder
+ */
+export async function initPromptBuilderData() {
+   try {
+      const [rules, levels] = await Promise.all([
+         loadJson('/data/atsRules.json'),
+         loadJson('/data/jobLevels.json')
+      ]);
+      atsRulesData = rules;
+      jobLevelsData = levels;
+      console.log('[PromptBuilder] Data initialized');
+   } catch (err) {
+      console.error('[PromptBuilder] Failed to initialize data:', err);
+   }
+}
 
 /**
  * Build CV optimization prompt
@@ -14,10 +38,10 @@ import jobLevelsData from '../../data/jobLevels.json' assert { type: 'json' };
  * @returns {string} Formatted prompt
  */
 export function buildOptimizationPrompt(cvText, jobLevel, jobDescription = '') {
-    const level = jobLevelsData.jobLevels.find(l => l.id === jobLevel);
-    const atsRules = atsRulesData.atsRules;
+   const level = jobLevelsData.jobLevels.find(l => l.id === jobLevel);
+   const atsRules = atsRulesData.atsRules;
 
-    let prompt = `You are an expert CV/resume writer specializing in ATS (Applicant Tracking System) optimization.
+   let prompt = `You are an expert CV/resume writer specializing in ATS (Applicant Tracking System) optimization.
 
 TASK: Rewrite the following CV to optimize it for a ${level.label} position.
 
@@ -56,7 +80,7 @@ OPTIMIZATION REQUIREMENTS:
 
 IMPORTANT: The output MUST be ATS-compatible. This is the highest priority.`;
 
-    return prompt;
+   return prompt;
 }
 
 /**
@@ -65,7 +89,7 @@ IMPORTANT: The output MUST be ATS-compatible. This is the highest priority.`;
  * @returns {string} Validation prompt
  */
 export function buildValidationPrompt(cvText) {
-    return `Review this CV for ATS (Applicant Tracking System) compatibility.
+   return `Review this CV for ATS (Applicant Tracking System) compatibility.
 
 CV TEXT:
 ${cvText}
