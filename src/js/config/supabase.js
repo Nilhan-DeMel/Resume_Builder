@@ -14,11 +14,15 @@ const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // TODO: Replace with actual URL
 const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // TODO: Replace with actual key
 
 // Demo mode - create mock Supabase client
+// Initialize Supabase client
+let supabaseClient;
+
+// Demo mode - create mock Supabase client
 if (DEMO_MODE) {
     console.log('🎭 DEMO MODE: Using mock authentication');
 
     // Mock Supabase client for demo
-    export const supabase = {
+    supabaseClient = {
         auth: {
             signInWithPassword: async ({ email, password }) => {
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -64,5 +68,7 @@ if (DEMO_MODE) {
     if (!window.supabase) {
         throw new Error('Supabase library not loaded. Check CDN script in index.html');
     }
-    export const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
+
+export const supabase = supabaseClient;
