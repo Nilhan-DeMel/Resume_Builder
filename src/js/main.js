@@ -7,6 +7,7 @@ import { initSession, listenToAuthChanges } from './auth/session.js';
 import { initRouter } from './ui/router.js';
 import { initAuthView } from './views/authView.js';
 import { initUploadView } from './views/uploadView.js';
+import { initEditorView } from './views/editorView.js';
 import { appState } from './state/appState.js';
 import { DEMO_MODE } from './config/demo.js';
 import { logWelcome } from './utils/logger.js';
@@ -38,11 +39,11 @@ async function initApp() {
         console.log('Step 2: Initializing views...');
         initAuthView();
         initUploadView();
+        initEditorView();
 
         console.log('  ✓ Auth view initialized');
         console.log('  ✓ Upload view initialized');
-
-        // TODO: Initialize other views
+        console.log('  ✓ Editor view initialized');
 
         // Check for existing session
         console.log('Step 3: Checking session...');

@@ -20,7 +20,12 @@ const CHECKS = [
     // Upload View Readiness (CRITICAL)
     { url: '/js/views/uploadView.js', contains: 'initUploadView', name: 'Upload View Module' },
     { url: '/js/utils/constants.js', contains: 'UPLOAD', name: 'Constants' },
-    { url: '/js/main.js', contains: 'initUploadView', name: 'Main Init Upload' }
+    { url: '/js/main.js', contains: 'initUploadView', name: 'Main Init Upload' },
+
+    // Editor & Labeling Readiness (TASK-031)
+    { url: '/js/views/editorView.js', contains: 'initEditorView', name: 'Editor View Module' },
+    { url: '/js/cv/labeler.js', contains: 'labelCvText', name: 'CV Labeler Module' },
+    { url: '/js/views/editorView.js', contains: 'optimizeBtn', name: 'Optimize Button Wiring' }
 ];
 
 let serverProcess = null;

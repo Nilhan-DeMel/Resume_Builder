@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 
 - Upload: clicking drop-zone opens file picker (no UI change) [TASK-028]
 - Upload: persistent CV filename + green check indicator after upload [TASK-029]
+- Editor: Auto-labeling (structure/tagging) of CV content [TASK-031]
+- Core: Robust text extraction for PDF/DOCX using vendored libs [TASK-031]
+- UI: Fixed blank Editor screen; wired "Optimize Now" button [TASK-031]
 
 ## [2026-01-11] - Agent Session 8
 
