@@ -19,6 +19,7 @@ export function initEditorView() {
     // Subscribe to state changes to populate textarea
     appState.subscribe((state) => {
         if (state.currentView === VIEWS.EDITOR) {
+            console.log(`[TRACE:${window.TRACE_ID}] EDITOR_RENDER_TRIGGERED view=${state.currentView}`);
             updateEditorContent(textarea);
         }
     });
@@ -62,6 +63,9 @@ function updateEditorContent(textarea) {
     const snapshot = cvState.getSnapshot();
     // Use editedText (which defaults to labeledText) or fallback to original
     const content = snapshot.editedText || snapshot.originalText || '';
+
+    // Trace Log (TASK-032)
+    console.log(`[TRACE:${window.TRACE_ID}] EDITOR_SET textareaFound=${!!textarea} contentChars=${content.length}`);
 
     if (content) {
         textarea.value = content;

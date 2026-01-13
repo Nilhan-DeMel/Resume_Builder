@@ -171,5 +171,9 @@ function handleProceed() {
         return;
     }
 
+    // Trace Log (TASK-032)
+    console.log(`[TRACE:${window.TRACE_ID}] PROCEED_CLICK jobLevel=${snapshot.jobLevel} originalChars=${snapshot.originalText?.length}`);
+
+    console.log(`[TRACE:${window.TRACE_ID}] NAVIGATING to EDITOR`);
     navigateTo(VIEWS.EDITOR);
 }

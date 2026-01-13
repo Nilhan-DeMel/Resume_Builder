@@ -28,15 +28,20 @@
 
 .editor-content {
     flex: 1;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xl);
+    /* More breathing room */
     overflow-y: auto;
-    font-family: 'Courier New', monospace;
-    font-size: var(--font-size-base);
+    /* Human-readable document font */
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
     color: var(--color-text-primary);
     background: transparent;
     border: none;
     resize: none;
-    line-height: 1.6;
+    line-height: 1.8;
+    /* Relaxed reading */
+    white-space: pre-wrap;
+    /* Preserve formatting */
 }
 
 .editor-content:focus {
