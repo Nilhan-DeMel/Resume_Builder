@@ -1,0 +1,28 @@
+{
+    "version": "1.1",
+    "pdf": {
+        "yLineThreshold": 3,
+        "blankLineGaps": {
+            "smallMultiplier": 1.5,
+            "largeMultiplier": 3.0
+        },
+        "rightMarginThreshold": 0.70,
+        "leftMarginThreshold": 0.15,
+        "minGapForArrow": 0.20,
+        "maxRightChunkLength": 50
+    },
+    "general": {
+        "maxConsecutiveBlankLines": 2,
+        "headingMaxLength": 30
+    },
+    "arrowMarker": {
+        "symbol": "↠",
+        "requiresBothClusters": true,
+        "rejectLowercaseStart": true,
+        "allowedPatterns": [
+            "date",
+            "location",
+            "contact"
+        ]
+    }
+}

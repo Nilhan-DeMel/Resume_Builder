@@ -58,7 +58,6 @@ async function extractFromText(file) {
 
 async function extractFromPDF(file) {
     await loadScript(PDFJS_SRC);
-    // Set worker
     if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_SRC;
     }
@@ -66,8 +65,18 @@ async function extractFromPDF(file) {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
+    // ===== FIDELITY RULES v1.1 CONFIGURATION =====
+    const CONFIG = {
+        yLineThreshold: 3,
+        rightMarginPct: 0.70,
+        leftMarginPct: 0.15,
+        minGapPct: 0.20,
+        maxRightChunkLen: 50,
+        maxConsecutiveBlankLines: 2
+    };
+
     const allLines = [];
-    let lastLineY = null;
+    let consecutiveBlankLines = 0;
 
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
         const page = await pdf.getPage(pageNum);
@@ -76,61 +85,91 @@ async function extractFromPDF(file) {
         const pageWidth = viewport.width;
 
         // Extract items with coordinates
-        const items = textContent.items.map(item => ({
-            str: item.str,
-            x: item.transform[4],
-            y: item.transform[5],
-            width: item.width || 0
-        }));
+        const items = textContent.items
+            .filter(item => item.str && item.str.trim())
+            .map(item => ({
+                str: item.str,
+                x: item.transform[4],
+                y: item.transform[5],
+                width: item.width || 0
+            }));
+
+        if (!items.length) continue;
 
         // Sort by y descending (top first), then x ascending (left first)
         items.sort((a, b) => {
             const yDiff = b.y - a.y;
-            if (Math.abs(yDiff) > 3) return yDiff; // 3-unit threshold for same line
+            if (Math.abs(yDiff) > CONFIG.yLineThreshold) return yDiff;
             return a.x - b.x;
         });
 
-        // Group into lines based on y-threshold
-        const Y_THRESHOLD = 3;
-        const BLANK_LINE_GAP = 15; // Gap threshold for blank line insertion
-        const RIGHT_MARGIN_THRESHOLD = pageWidth * 0.65; // 65% of page width
+        // Compute median line height for blank line detection
+        const lineYs = [];
+        let prevY = null;
+        for (const item of items) {
+            if (prevY !== null && Math.abs(item.y - prevY) > CONFIG.yLineThreshold) {
+                lineYs.push(prevY);
+            }
+            prevY = item.y;
+        }
+        lineYs.push(prevY);
 
+        const lineGaps = [];
+        for (let i = 1; i < lineYs.length; i++) {
+            lineGaps.push(Math.abs(lineYs[i] - lineYs[i - 1]));
+        }
+        const medianGap = lineGaps.length ? lineGaps.sort((a, b) => a - b)[Math.floor(lineGaps.length / 2)] : 12;
+
+        // Group into lines
+        const lines = [];
         let currentLine = [];
         let currentY = null;
 
         for (const item of items) {
-            if (currentY !== null) {
-                const yGap = Math.abs(item.y - currentY);
-
-                if (yGap > Y_THRESHOLD) {
-                    // Finish current line
-                    if (currentLine.length) {
-                        const lineText = buildLineWithRightMarker(currentLine, RIGHT_MARGIN_THRESHOLD);
-                        allLines.push(lineText);
-
-                        // Check for blank line (large gap)
-                        if (lastLineY !== null && Math.abs(item.y - lastLineY) > BLANK_LINE_GAP) {
-                            allLines.push(''); // Insert blank line
-                        }
-                        lastLineY = currentY;
-                    }
-                    currentLine = [];
+            if (currentY !== null && Math.abs(item.y - currentY) > CONFIG.yLineThreshold) {
+                if (currentLine.length) {
+                    lines.push({ items: currentLine, y: currentY });
                 }
+                currentLine = [];
             }
             currentLine.push(item);
             currentY = item.y;
         }
-
-        // Finish last line of page
         if (currentLine.length) {
-            const lineText = buildLineWithRightMarker(currentLine, RIGHT_MARGIN_THRESHOLD);
-            allLines.push(lineText);
-            lastLineY = currentY;
+            lines.push({ items: currentLine, y: currentY });
         }
 
-        // Page break
-        if (pageNum < pdf.numPages) {
-            allLines.push(''); // Blank line between pages
+        // Process lines with blank line detection
+        let lastY = null;
+        for (const line of lines) {
+            // Check for blank line insertion based on gap
+            if (lastY !== null) {
+                const gap = Math.abs(line.y - lastY);
+                let blanksToAdd = 0;
+                if (gap >= medianGap * 3.0) {
+                    blanksToAdd = 2;
+                } else if (gap >= medianGap * 1.5) {
+                    blanksToAdd = 1;
+                }
+
+                // R2: Cap at max 2 consecutive blank lines
+                for (let i = 0; i < blanksToAdd && consecutiveBlankLines < CONFIG.maxConsecutiveBlankLines; i++) {
+                    allLines.push('');
+                    consecutiveBlankLines++;
+                }
+            }
+
+            // Build line text with strict ↠ detection
+            const lineText = buildLineWithStrictArrowDetection(line.items, pageWidth, CONFIG);
+            allLines.push(lineText);
+            consecutiveBlankLines = 0; // Reset on non-blank line
+            lastY = line.y;
+        }
+
+        // Page break (counts as 1 blank)
+        if (pageNum < pdf.numPages && consecutiveBlankLines < CONFIG.maxConsecutiveBlankLines) {
+            allLines.push('');
+            consecutiveBlankLines++;
         }
     }
 
@@ -138,30 +177,26 @@ async function extractFromPDF(file) {
 }
 
 /**
- * Build line text with ↠ marker for right-justified chunks
+ * Build line text with STRICT ↠ detection per FIDELITY_RULES v1.1
+ * R3: Only emit ↠ when ALL confidence gates pass
  */
-function buildLineWithRightMarker(lineItems, rightMarginThreshold) {
-    // Separate left and right chunks
-    const leftChunks = [];
-    const rightChunks = [];
+function buildLineWithStrictArrowDetection(lineItems, pageWidth, config) {
+    const leftMargin = pageWidth * config.leftMarginPct;
+    const rightMargin = pageWidth * config.rightMarginPct;
+    const minGap = pageWidth * config.minGapPct;
 
-    for (const item of lineItems) {
-        if (item.x >= rightMarginThreshold) {
-            rightChunks.push(item.str);
-        } else {
-            leftChunks.push(item.str);
-        }
-    }
+    // Separate potential left and right clusters
+    const leftItems = lineItems.filter(item => item.x < rightMargin);
+    const rightItems = lineItems.filter(item => item.x >= rightMargin);
 
-    // Join with smart spacing
-    const joinTokens = (tokens) => {
+    // Join tokens helper
+    const joinTokens = (items) => {
         let result = '';
-        for (let i = 0; i < tokens.length; i++) {
-            const token = tokens[i];
+        for (let i = 0; i < items.length; i++) {
+            const token = items[i].str;
             if (i > 0 && result.length > 0) {
                 const prevChar = result[result.length - 1];
                 const currChar = token[0];
-                // Add space if needed to prevent word-joining
                 if (/[A-Za-z0-9]/.test(prevChar) && /[A-Za-z0-9]/.test(currChar)) {
                     result += ' ';
                 }
@@ -171,24 +206,116 @@ function buildLineWithRightMarker(lineItems, rightMarginThreshold) {
         return result;
     };
 
-    const leftText = joinTokens(leftChunks);
-    const rightText = joinTokens(rightChunks);
+    const leftText = joinTokens(leftItems);
+    const rightText = joinTokens(rightItems);
 
+    // ===== STRICT ↠ GATING (R3) =====
     if (rightText && leftText) {
-        return `${leftText}  ↠ ${rightText}`;
+        const shouldEmitArrow = checkArrowConfidence(leftItems, rightItems, leftText, rightText, leftMargin, minGap, config);
+
+        if (shouldEmitArrow) {
+            console.log(`[FIDELITY:ARROW] PASS: "${leftText}" ↠ "${rightText}"`);
+            return `${leftText}  ↠ ${rightText}`;
+        } else {
+            console.log(`[FIDELITY:ARROW] REJECT: Merging "${leftText}" + "${rightText}"`);
+            // No arrow - just join as continuous text
+            return joinTokens(lineItems);
+        }
     } else if (rightText) {
-        return `↠ ${rightText}`;
+        // Only right text, no left - likely just regular text
+        // R3: ↠ requires BOTH clusters, so no arrow
+        return rightText;
     }
+
     return leftText;
+}
+
+/**
+ * Check if we should emit ↠ marker
+ * Returns true only when ALL confidence gates pass
+ */
+function checkArrowConfidence(leftItems, rightItems, leftText, rightText, leftMargin, minGap, config) {
+    // Gate 1: Left cluster must start near left margin
+    if (leftItems.length === 0 || leftItems[0].x > leftMargin * 2) {
+        return false; // Left text doesn't start near left margin
+    }
+
+    // Gate 2: Significant horizontal gap between clusters
+    const leftMaxX = Math.max(...leftItems.map(i => i.x + (i.width || 0)));
+    const rightMinX = Math.min(...rightItems.map(i => i.x));
+    const gap = rightMinX - leftMaxX;
+    if (gap < minGap) {
+        return false; // Not enough gap
+    }
+
+    // Gate 3: Right chunk must be short
+    if (rightText.length > config.maxRightChunkLen) {
+        return false; // Right chunk too long (likely paragraph continuation)
+    }
+
+    // Gate 4: Right chunk must not start with lowercase (except email)
+    const firstChar = rightText.trim()[0];
+    if (firstChar && /^[a-z]/.test(firstChar) && !rightText.includes('@')) {
+        return false; // Starts with lowercase = sentence continuation
+    }
+
+    // Gate 5: Right chunk should match common patterns
+    const isDateLike = /\b\d{4}\b|\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|February|March|April|June|July|August|September|October|November|December)\b/i.test(rightText) ||
+        /\d+\s*[-–—]\s*(Present|\d{4})/i.test(rightText);
+    const isLocationLike = /,/.test(rightText) && rightText.length < 40;
+    const isContactLike = /@|\.com|\.org|\.edu|\+\d|http|www\./i.test(rightText);
+
+    if (!isDateLike && !isLocationLike && !isContactLike) {
+        // Not a recognized right-side pattern
+        // Additional check: if it looks like a sentence fragment, reject
+        if (/^(the|a|an|is|are|was|were|has|have|had|this|that|which|who|what)\s/i.test(rightText)) {
+            return false;
+        }
+        // Accept short non-sentence text (might be a skill/label)
+        if (rightText.length > 25) {
+            return false;
+        }
+    }
+
+    // Gate 6: Must not follow sentence continuation punctuation
+    if (leftText.endsWith(',') || leftText.endsWith('and') || leftText.endsWith('or')) {
+        return false;
+    }
+
+    return true;
 }
 
 async function extractFromWord(file) {
     await loadScript(MAMMOTH_SRC);
     const arrayBuffer = await file.arrayBuffer();
-    const result = await window.mammoth.extractRawText({ arrayBuffer: arrayBuffer });
-    return result.value;
+
+    // Extract styled HTML for display (R4: Style Fidelity)
+    const htmlResult = await window.mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+    const styledHtml = htmlResult.value;
+
+    // Also extract raw text for editing/plain view
+    const textResult = await window.mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+    const plainText = textResult.value;
+
+    // Store styled HTML in a data attribute or return both
+    // For now, return plain text but log styled HTML availability
+    console.log('[FIDELITY:DOCX] Styled HTML available, length:', styledHtml.length);
+
+    // TODO: Store styledHtml in cvState for display layer
+    // For MVP, return plain text but with style markers preserved via HTML
+    // We'll use styledHtml in the editor display layer
+    window.__docxStyledHtml = styledHtml;
+
+    return plainText;
 }
 
 // TODO: ODT support via JSZip if needed
 // TODO: CRT/RTF basic support
 
+/**
+ * Get stored styled HTML from last DOCX extraction
+ * @returns {string|null} HTML string or null
+ */
+export function getDocxStyledHtml() {
+    return window.__docxStyledHtml || null;
+}
