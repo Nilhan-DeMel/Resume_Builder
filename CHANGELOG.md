@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 - Editor: Auto-labeling (structure/tagging) of CV content [TASK-031]
 - Core: Robust text extraction for PDF/DOCX using vendored libs [TASK-031]
 - UI: Fixed blank Editor screen; wired "Optimize Now" button [TASK-031]
+- UI: Improved Editor readability (Inter font, spacing, clear section headers) [TASK-032]
+- Debug: Added Trace logging for Critical User Journeys (Upload -> Editor) [TASK-032]
 
 ## [2026-01-11] - Agent Session 8
 

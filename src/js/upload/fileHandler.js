@@ -43,6 +43,11 @@ export async function handleFileUpload(file) {
         cvState.setOriginalText(normalizedText); // Store clean original
         cvState.setEditedText(labeledText);      // Editor starts with labeled text
 
+        // Trace Logs (TASK-032)
+        console.log(`[TRACE:${window.TRACE_ID}] UPLOAD_OK name=${file.name} type=${file.type}`);
+        console.log(`[TRACE:${window.TRACE_ID}] EXTRACT_OK rawChars=${rawText.length} labeledChars=${labeledText.length}`);
+        console.log(`[TRACE:${window.TRACE_ID}] CVSTATE_OK original=${cvState.originalText?.length} edited=${cvState.editedText?.length}`);
+
         return {
             success: true,
             text: normalizedText,

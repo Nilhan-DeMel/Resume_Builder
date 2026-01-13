@@ -14,6 +14,11 @@ import { logWelcome } from './utils/logger.js';
 import { initPromptBuilderData } from './ai/promptBuilder.js';
 import { errorLogger } from './utils/errorLogger.js';
 
+// Traceability (TASK-032)
+window.TRACE_ID = crypto.randomUUID?.() ?? String(Date.now());
+console.log('[RB_BUILD]', 'TASK-032-DEBUG', new Date().toISOString());
+console.log(`[TRACE:${window.TRACE_ID}] BOOT main.js loaded`);
+
 /**
  * Initialize application
  */

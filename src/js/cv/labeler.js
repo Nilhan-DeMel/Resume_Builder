@@ -68,14 +68,18 @@ export function labelCvText(normalizedText) {
         if (foundSection) {
             inContactHeader = false;
             currentSection = foundSection;
-            labeledLines.push(`\n[${foundSection}]`);
+            // Formatting: Add double spacing and banner-style header
+            const header = `\n\n----------------------------------------\n[ ${foundSection.toUpperCase()} ]\n----------------------------------------`;
+            labeledLines.push(header);
             structure.sections[foundSection] = structure.sections[foundSection] || [];
         } else if (inContactHeader && index < 10) {
             // Heuristic: Top 10 lines likely contact info if not a section
             if (!currentSection) {
                 // Check if it looks like contact info
                 if (line.match(/@/) || line.match(/http/) || line.match(/\d{3,}/)) {
-                    if (labeledLines.indexOf('[CONTACT]') === -1) labeledLines.push('[CONTACT]');
+                    if (labeledLines.indexOf('[CONTACT]') === -1) {
+                        labeledLines.push(`\n----------------------------------------\n[ CONTACT ]\n----------------------------------------`);
+                    }
                     currentSection = 'CONTACT';
                 }
             }
@@ -88,7 +92,9 @@ export function labelCvText(normalizedText) {
 
         // Regular line processing
         if (!foundSection) {
-            labeledLines.push(line);
+            // Indent content under sections for readability
+            const prefix = currentSection ? '  ' : '';
+            labeledLines.push(prefix + line);
             if (currentSection && structure.sections[currentSection]) {
                 structure.sections[currentSection].push(line);
             }
