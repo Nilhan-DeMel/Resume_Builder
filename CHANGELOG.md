@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- Upload: clicking drop-zone opens file picker (no UI change) [TASK-028]
+
 ## [2026-01-11] - Agent Session 8
 
 ### Fixed
