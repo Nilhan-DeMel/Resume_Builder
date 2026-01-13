@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Fix: Added cache-busting to prevent stale cvState.js errors [TASK-034]
 - Core: Fidelity Mode — Editor renders extracted text in exact order (no AI/labeling) [TASK-035]
 - UI: Removed section headers and NOTES/UNCAPTURED from upload→editor pipeline [TASK-035]
+- Fix: Strict line preservation + blank-line sections + ↠ marker for right-justified chunks [TASK-035.1]
 
 ## [2026-01-11] - Agent Session 8
 
