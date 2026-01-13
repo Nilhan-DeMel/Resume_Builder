@@ -1,13 +1,10 @@
-/**
- * File Upload Handler
- * Purpose: Core file upload logic
- */
-
 import { isValidFileType, isValidFileSize } from '../utils/validators.js';
 import { formatFileSize } from '../utils/helpers.js';
 import { cvState } from '../state/cvState.js';
 import { extractText } from './textExtractor.js';
-import { normalizeCvText, labelCvText } from '../cv/labeler.js';
+import { normalizeCvText } from '../cv/labeler.js';
+import { canonicalizeCv } from '../ai/canonicalizer.js';
+import { renderCanonicalToEditorText } from '../cv/renderer.js';
 
 /**
  * Handle file upload
@@ -18,8 +15,6 @@ export async function handleFileUpload(file) {
     try {
         // Validate file type
         if (!isValidFileType(file)) {
-            // Note: textExtractor handles broad types now, but validator might be strict
-            // For now, validator allows what constants.js ALLOWED_TYPES defines
             if (!file.name.match(/\.(txt|pdf|docx|doc)$/i)) {
                 throw new Error(`Invalid file type. Please upload PDF, Word, or Text files.`);
             }
@@ -36,25 +31,44 @@ export async function handleFileUpload(file) {
         // Extract text based on file type
         const rawText = await extractText(file);
 
-        // Normalize and Label
+        // Normalize text
         const normalizedText = normalizeCvText(rawText);
-        const { labeledText, structure, warnings } = labelCvText(normalizedText);
+        cvState.setOriginalText(rawText);
+        cvState.setNormalizedText(normalizedText);
 
-        cvState.setOriginalText(normalizedText); // Store clean original
-        cvState.setEditedText(labeledText);      // Editor starts with labeled text
+        // Canonicalize using AI/heuristics
+        const fileMeta = {
+            fileName: file.name,
+            fileType: file.type || file.name.split('.').pop(),
+            method: file.type === 'application/pdf' ? 'pdf.js' :
+                file.name.endsWith('.docx') ? 'mammoth' : 'text'
+        };
 
-        // Trace Logs (TASK-032)
+        const { canonicalJson, confidence } = await canonicalizeCv({
+            normalizedText,
+            jobLevel: cvState.jobLevel,
+            jobDescription: cvState.jobDescription,
+            fileMeta
+        });
+
+        cvState.setCanonicalJson(canonicalJson);
+
+        // Render canonical JSON to editor text
+        const editorText = renderCanonicalToEditorText(canonicalJson);
+        cvState.setEditedText(editorText);
+
+        // Trace Logs
         console.log(`[TRACE:${window.TRACE_ID}] UPLOAD_OK name=${file.name} type=${file.type}`);
-        console.log(`[TRACE:${window.TRACE_ID}] EXTRACT_OK rawChars=${rawText.length} labeledChars=${labeledText.length}`);
-        console.log(`[TRACE:${window.TRACE_ID}] CVSTATE_OK original=${cvState.originalText?.length} edited=${cvState.editedText?.length}`);
+        console.log(`[TRACE:${window.TRACE_ID}] CANONICAL_OK confidence=${confidence} sections=${Object.keys(canonicalJson).length}`);
+        console.log(`[TRACE:${window.TRACE_ID}] CVSTATE_OK normalized=${normalizedText?.length} edited=${editorText?.length}`);
 
         return {
             success: true,
             text: normalizedText,
-            labeledText,
+            labeledText: editorText,
             fileName: file.name,
             fileSize: formatFileSize(file.size),
-            warnings
+            warnings: canonicalJson.notes?.formattingIssues || []
         };
     } catch (error) {
         console.error('File upload error:', error);

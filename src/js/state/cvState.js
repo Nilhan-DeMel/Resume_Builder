@@ -7,7 +7,9 @@ class CVState {
     constructor() {
         this.originalFile = null;
         this.originalText = '';
+        this.normalizedText = ''; // Clean text
         this.editedText = '';
+        this.canonicalJson = null; // Canonical structure (TASK-033)
         this.jobLevel = null;
         this.jobDescription = '';
         this.optimizedCV = null;
@@ -40,6 +42,22 @@ class CVState {
      */
     setEditedText(text) {
         this.editedText = text;
+    }
+
+    /**
+     * Set normalized text
+     * @param {string} text - Normalized text
+     */
+    setNormalizedText(text) {
+        this.normalizedText = text;
+    }
+
+    /**
+     * Set canonical JSON structure
+     * @param {Object} json - Canonical CV structure
+     */
+    setCanonicalJson(json) {
+        this.canonicalJson = json;
     }
 
     /**
@@ -80,7 +98,9 @@ class CVState {
     reset() {
         this.originalFile = null;
         this.originalText = '';
+        this.normalizedText = '';
         this.editedText = '';
+        this.canonicalJson = null;
         this.jobLevel = null;
         this.jobDescription = '';
         this.optimizedCV = null;
@@ -94,7 +114,9 @@ class CVState {
     getSnapshot() {
         return {
             originalText: this.originalText,
+            normalizedText: this.normalizedText,
             editedText: this.editedText,
+            canonicalJson: this.canonicalJson,
             jobLevel: this.jobLevel,
             jobDescription: this.jobDescription,
             optimizedCV: this.optimizedCV

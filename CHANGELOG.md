@@ -13,6 +13,9 @@ All notable changes to this project will be documented in this file.
 - UI: Fixed blank Editor screen; wired "Optimize Now" button [TASK-031]
 - UI: Improved Editor readability (Inter font, spacing, clear section headers) [TASK-032]
 - Debug: Added Trace logging for Critical User Journeys (Upload -> Editor) [TASK-032]
+- Core: Canonical CV Schema v1 (LinkedIn-like JSON structure) [TASK-033]
+- AI: Heuristic canonicalizer for structured CV parsing (DEMO mode) [TASK-033]
+- UI: CV Renderer for consistent Editor display across file formats [TASK-033]
 
 ## [2026-01-11] - Agent Session 8
 
