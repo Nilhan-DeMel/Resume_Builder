@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 - AI: Heuristic canonicalizer for structured CV parsing (DEMO mode) [TASK-033]
 - UI: CV Renderer for consistent Editor display across file formats [TASK-033]
 - Fix: Added cache-busting to prevent stale cvState.js errors [TASK-034]
+- Core: Fidelity Mode — Editor renders extracted text in exact order (no AI/labeling) [TASK-035]
+- UI: Removed section headers and NOTES/UNCAPTURED from upload→editor pipeline [TASK-035]
 
 ## [2026-01-11] - Agent Session 8
 
