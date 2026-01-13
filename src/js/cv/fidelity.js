@@ -8,14 +8,15 @@
 
 /**
  * Minimal normalization for fidelity mode
- * Only standardizes line endings, nothing else
+ * STRICT: Only standardizes line endings, preserves ALL newlines and blank lines
  * @param {string} text - Raw extracted text
  * @returns {string} Minimally normalized text
  */
 export function normalizeMinimal(text) {
     if (!text) return '';
 
-    // Only normalize line endings to \n (no other changes)
+    // STRICT: Only normalize CRLF to LF, preserve everything else
+    // Do NOT collapse newlines, do NOT trim lines
     return text
         .replace(/\r\n/g, '\n')
         .replace(/\r/g, '\n');

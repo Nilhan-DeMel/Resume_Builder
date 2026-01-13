@@ -66,14 +66,120 @@ async function extractFromPDF(file) {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
 
-    let fullText = '';
-    for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
+    const allLines = [];
+    let lastLineY = null;
+
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
         const textContent = await page.getTextContent();
-        const pageText = textContent.items.map(item => item.str).join(' ');
-        fullText += pageText + '\n\n';
+        const viewport = page.getViewport({ scale: 1.0 });
+        const pageWidth = viewport.width;
+
+        // Extract items with coordinates
+        const items = textContent.items.map(item => ({
+            str: item.str,
+            x: item.transform[4],
+            y: item.transform[5],
+            width: item.width || 0
+        }));
+
+        // Sort by y descending (top first), then x ascending (left first)
+        items.sort((a, b) => {
+            const yDiff = b.y - a.y;
+            if (Math.abs(yDiff) > 3) return yDiff; // 3-unit threshold for same line
+            return a.x - b.x;
+        });
+
+        // Group into lines based on y-threshold
+        const Y_THRESHOLD = 3;
+        const BLANK_LINE_GAP = 15; // Gap threshold for blank line insertion
+        const RIGHT_MARGIN_THRESHOLD = pageWidth * 0.65; // 65% of page width
+
+        let currentLine = [];
+        let currentY = null;
+
+        for (const item of items) {
+            if (currentY !== null) {
+                const yGap = Math.abs(item.y - currentY);
+
+                if (yGap > Y_THRESHOLD) {
+                    // Finish current line
+                    if (currentLine.length) {
+                        const lineText = buildLineWithRightMarker(currentLine, RIGHT_MARGIN_THRESHOLD);
+                        allLines.push(lineText);
+
+                        // Check for blank line (large gap)
+                        if (lastLineY !== null && Math.abs(item.y - lastLineY) > BLANK_LINE_GAP) {
+                            allLines.push(''); // Insert blank line
+                        }
+                        lastLineY = currentY;
+                    }
+                    currentLine = [];
+                }
+            }
+            currentLine.push(item);
+            currentY = item.y;
+        }
+
+        // Finish last line of page
+        if (currentLine.length) {
+            const lineText = buildLineWithRightMarker(currentLine, RIGHT_MARGIN_THRESHOLD);
+            allLines.push(lineText);
+            lastLineY = currentY;
+        }
+
+        // Page break
+        if (pageNum < pdf.numPages) {
+            allLines.push(''); // Blank line between pages
+        }
     }
-    return fullText;
+
+    return allLines.join('\n');
+}
+
+/**
+ * Build line text with ↠ marker for right-justified chunks
+ */
+function buildLineWithRightMarker(lineItems, rightMarginThreshold) {
+    // Separate left and right chunks
+    const leftChunks = [];
+    const rightChunks = [];
+
+    for (const item of lineItems) {
+        if (item.x >= rightMarginThreshold) {
+            rightChunks.push(item.str);
+        } else {
+            leftChunks.push(item.str);
+        }
+    }
+
+    // Join with smart spacing
+    const joinTokens = (tokens) => {
+        let result = '';
+        for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
+            if (i > 0 && result.length > 0) {
+                const prevChar = result[result.length - 1];
+                const currChar = token[0];
+                // Add space if needed to prevent word-joining
+                if (/[A-Za-z0-9]/.test(prevChar) && /[A-Za-z0-9]/.test(currChar)) {
+                    result += ' ';
+                }
+            }
+            result += token;
+        }
+        return result;
+    };
+
+    const leftText = joinTokens(leftChunks);
+    const rightText = joinTokens(rightChunks);
+
+    if (rightText && leftText) {
+        return `${leftText}  ↠ ${rightText}`;
+    } else if (rightText) {
+        return `↠ ${rightText}`;
+    }
+    return leftText;
 }
 
 async function extractFromWord(file) {
