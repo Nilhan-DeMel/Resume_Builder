@@ -11,7 +11,7 @@ const BASE_URL = `http://localhost:${PORT}`;
 
 // Artifacts to check
 const CHECKS = [
-    { url: '/', contains: "import('./js/main.js')", name: 'Index' },
+    { url: '/', contains: "import('./js/main.js", name: 'Index' }, // Flexible: matches with or without version param
     { url: '/js/main.js', contains: 'Initializing Resume_Builder', name: 'Main JS' },
     { url: '/js/config/demo.js', contains: 'DEMO_MODE', name: 'Demo Config' },
     { url: '/js/auth/login.js', contains: 'DEMO', name: 'Login Logic' },

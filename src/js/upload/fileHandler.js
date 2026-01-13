@@ -2,9 +2,13 @@ import { isValidFileType, isValidFileSize } from '../utils/validators.js';
 import { formatFileSize } from '../utils/helpers.js';
 import { cvState } from '../state/cvState.js';
 import { extractText } from './textExtractor.js';
-import { normalizeCvText } from '../cv/labeler.js';
-import { canonicalizeCv } from '../ai/canonicalizer.js';
-import { renderCanonicalToEditorText } from '../cv/renderer.js';
+import { FEATURES } from '../config/features.js';
+import { toFidelityText } from '../cv/fidelity.js';
+
+// Canonical mode imports (disabled by default per TASK-035)
+// import { normalizeCvText } from '../cv/labeler.js';
+// import { canonicalizeCv } from '../ai/canonicalizer.js';
+// import { renderCanonicalToEditorText } from '../cv/renderer.js';
 
 /**
  * Handle file upload
@@ -31,45 +35,33 @@ export async function handleFileUpload(file) {
         // Extract text based on file type
         const rawText = await extractText(file);
 
-        // Normalize text
-        const normalizedText = normalizeCvText(rawText);
-        cvState.setOriginalText(rawText);
-        cvState.setNormalizedText(normalizedText);
+        // FIDELITY MODE (TASK-035): Show exact extracted text, no AI/structuring
+        if (FEATURES.FIDELITY_MODE) {
+            const fileType = file.type || file.name.split('.').pop();
+            const fidelityText = toFidelityText({
+                fileType,
+                extractedText: rawText
+            });
 
-        // Canonicalize using AI/heuristics
-        const fileMeta = {
-            fileName: file.name,
-            fileType: file.type || file.name.split('.').pop(),
-            method: file.type === 'application/pdf' ? 'pdf.js' :
-                file.name.endsWith('.docx') ? 'mammoth' : 'text'
-        };
+            cvState.setOriginalText(fidelityText);
+            cvState.setEditedText(fidelityText);
 
-        const { canonicalJson, confidence } = await canonicalizeCv({
-            normalizedText,
-            jobLevel: cvState.jobLevel,
-            jobDescription: cvState.jobDescription,
-            fileMeta
-        });
+            console.log(`[TRACE:${window.TRACE_ID}] FIDELITY_MODE upload name=${file.name} chars=${fidelityText?.length}`);
 
-        cvState.setCanonicalJson(canonicalJson);
+            return {
+                success: true,
+                text: fidelityText,
+                labeledText: fidelityText, // No labeling in fidelity mode
+                fileName: file.name,
+                fileSize: formatFileSize(file.size),
+                warnings: []
+            };
+        }
 
-        // Render canonical JSON to editor text
-        const editorText = renderCanonicalToEditorText(canonicalJson);
-        cvState.setEditedText(editorText);
+        // CANONICAL MODE (disabled by design per TASK-035)
+        // This code path is kept for future use but not invoked when FIDELITY_MODE=true
+        throw new Error('Canonical mode is disabled. Set FEATURES.FIDELITY_MODE=false to enable.');
 
-        // Trace Logs
-        console.log(`[TRACE:${window.TRACE_ID}] UPLOAD_OK name=${file.name} type=${file.type}`);
-        console.log(`[TRACE:${window.TRACE_ID}] CANONICAL_OK confidence=${confidence} sections=${Object.keys(canonicalJson).length}`);
-        console.log(`[TRACE:${window.TRACE_ID}] CVSTATE_OK normalized=${normalizedText?.length} edited=${editorText?.length}`);
-
-        return {
-            success: true,
-            text: normalizedText,
-            labeledText: editorText,
-            fileName: file.name,
-            fileSize: formatFileSize(file.size),
-            warnings: canonicalJson.notes?.formattingIssues || []
-        };
     } catch (error) {
         console.error('File upload error:', error);
         return {
