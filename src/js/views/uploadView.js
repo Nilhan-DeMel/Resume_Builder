@@ -108,8 +108,44 @@ async function handleDroppedFiles(files) {
 function processUploadResult(result) {
     if (result.success) {
         showToast(`File uploaded: ${result.fileName}`, 'success');
+        updateCvUploadStatus(true, result.fileName);
     } else {
         showToast(result.error, 'error');
+        updateCvUploadStatus(false, null, result.error);
+    }
+}
+
+/**
+ * Update persistent CV upload status indicator
+ * @param {boolean} success - Whether upload succeeded
+ * @param {string|null} fileName - Uploaded file name (on success)
+ * @param {string|null} errorMsg - Error message (on failure)
+ */
+function updateCvUploadStatus(success, fileName = null, errorMsg = null) {
+    const dropZone = document.querySelector('#drop-zone');
+    if (!dropZone) return;
+
+    // Find or create status element
+    let statusEl = dropZone.querySelector('#cv-upload-status');
+    if (!statusEl) {
+        statusEl = document.createElement('div');
+        statusEl.id = 'cv-upload-status';
+        statusEl.style.cssText = 'margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.9rem;';
+        dropZone.appendChild(statusEl);
+    }
+
+    if (success && fileName) {
+        // Green check-circle SVG
+        const checkSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+        statusEl.innerHTML = `${checkSvg}<span style="color: #22c55e; font-weight: 500;">Uploaded: ${fileName}</span>`;
+        statusEl.style.display = 'flex';
+    } else if (!success && errorMsg) {
+        // Red X-circle SVG for error
+        const errorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+        statusEl.innerHTML = `${errorSvg}<span style="color: #ef4444;">Upload failed</span>`;
+        statusEl.style.display = 'flex';
+    } else {
+        statusEl.style.display = 'none';
     }
 }
 
