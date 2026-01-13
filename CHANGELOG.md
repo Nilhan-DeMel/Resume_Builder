@@ -20,6 +20,9 @@ All notable changes to this project will be documented in this file.
 - Core: Fidelity Mode — Editor renders extracted text in exact order (no AI/labeling) [TASK-035]
 - UI: Removed section headers and NOTES/UNCAPTURED from upload→editor pipeline [TASK-035]
 - Fix: Strict line preservation + blank-line sections + ↠ marker for right-justified chunks [TASK-035.1]
+- Fix: Strict ↠ gating (6 confidence gates) to eliminate false positives [TASK-035.2]
+- Fix: Median-based blank line density with max 2 cap [TASK-035.2]
+- Core: DOCX styled HTML extraction for bold/italic/underline [TASK-035.2]
 
 ## [2026-01-11] - Agent Session 8
 
