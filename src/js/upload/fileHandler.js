@@ -7,6 +7,7 @@ import { isValidFileType, isValidFileSize } from '../utils/validators.js';
 import { formatFileSize } from '../utils/helpers.js';
 import { cvState } from '../state/cvState.js';
 import { extractText } from './textExtractor.js';
+import { normalizeCvText, labelCvText } from '../cv/labeler.js';
 
 /**
  * Handle file upload
@@ -17,7 +18,11 @@ export async function handleFileUpload(file) {
     try {
         // Validate file type
         if (!isValidFileType(file)) {
-            throw new Error(`Invalid file type. Please upload PDF, Word, Image, or Text files.`);
+            // Note: textExtractor handles broad types now, but validator might be strict
+            // For now, validator allows what constants.js ALLOWED_TYPES defines
+            if (!file.name.match(/\.(txt|pdf|docx|doc)$/i)) {
+                throw new Error(`Invalid file type. Please upload PDF, Word, or Text files.`);
+            }
         }
 
         // Validate file size
@@ -29,14 +34,22 @@ export async function handleFileUpload(file) {
         cvState.setOriginalFile(file);
 
         // Extract text based on file type
-        const text = await extractText(file);
-        cvState.setOriginalText(text);
+        const rawText = await extractText(file);
+
+        // Normalize and Label
+        const normalizedText = normalizeCvText(rawText);
+        const { labeledText, structure, warnings } = labelCvText(normalizedText);
+
+        cvState.setOriginalText(normalizedText); // Store clean original
+        cvState.setEditedText(labeledText);      // Editor starts with labeled text
 
         return {
             success: true,
-            text,
+            text: normalizedText,
+            labeledText,
             fileName: file.name,
-            fileSize: formatFileSize(file.size)
+            fileSize: formatFileSize(file.size),
+            warnings
         };
     } catch (error) {
         console.error('File upload error:', error);
