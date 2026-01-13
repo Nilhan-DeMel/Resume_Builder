@@ -162,7 +162,8 @@
     <!-- Main Application Script (ES6 Module) -->
     <script type="module">
         // Import and run main app
-        import('./js/main.js').catch(err => {
+        // Cache-bust: version updated on TASK-034
+        import('./js/main.js?v=20260113').catch(err => {
             console.error('Failed to load application:', err);
             document.body.innerHTML = '<div style="color: white; padding: 50px; text-align: center;"><h1>Failed to Load Application</h1><p>Check browser console for details.</p><p>Error: ' + err.message + '</p></div>';
         });
