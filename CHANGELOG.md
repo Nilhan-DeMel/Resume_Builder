@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Upload: clicking drop-zone opens file picker (no UI change) [TASK-028]
+- Upload: persistent CV filename + green check indicator after upload [TASK-029]
 
 ## [2026-01-11] - Agent Session 8
 
