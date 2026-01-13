@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Core: Canonical CV Schema v1 (LinkedIn-like JSON structure) [TASK-033]
 - AI: Heuristic canonicalizer for structured CV parsing (DEMO mode) [TASK-033]
 - UI: CV Renderer for consistent Editor display across file formats [TASK-033]
+- Fix: Added cache-busting to prevent stale cvState.js errors [TASK-034]
 
 ## [2026-01-11] - Agent Session 8
 
