@@ -29,14 +29,14 @@ async function startServer() {
     console.log('Starting temporary server...');
     // Try Python first (per environment preference)
     return new Promise((resolve, reject) => {
-        const python = spawn('python3', ['-m', 'http.server', PORT]);
+        const python = spawn('python3', ['-m', 'http.server', PORT], { cwd: 'src' });
 
         python.stdout.on('data', (data) => { if (data.toString().includes('Serving')) resolve(python); });
         python.stderr.on('data', (data) => { if (data.toString().includes('Serving')) resolve(python); });
 
         // Fallback to 'python' if 'python3' fails immediately
         python.on('error', () => {
-            const python2 = spawn('python', ['-m', 'http.server', PORT]);
+            const python2 = spawn('python', ['-m', 'http.server', PORT], { cwd: 'src' });
             python2.stdout.on('data', (data) => { if (data.toString().includes('Serving')) resolve(python2); });
             python2.stderr.on('data', (data) => { if (data.toString().includes('Serving')) resolve(python2); });
             serverProcess = python2;

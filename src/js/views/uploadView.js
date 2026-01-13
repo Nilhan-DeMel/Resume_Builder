@@ -35,6 +35,14 @@ export function initUploadView() {
     const dropZone = uploadView.querySelector('#drop-zone');
     if (dropZone) {
         initDragDrop(dropZone, handleDroppedFiles);
+
+        // Click anywhere on drop-zone opens file picker (except interactive elements)
+        dropZone.addEventListener('click', (e) => {
+            const interactiveTags = ['INPUT', 'SELECT', 'BUTTON', 'A', 'TEXTAREA', 'LABEL'];
+            if (interactiveTags.includes(e.target.tagName)) return;
+            if (e.target.closest('input, select, button, a, textarea, label')) return;
+            fileInput?.click();
+        });
     }
 
     // Initialize paste handler
