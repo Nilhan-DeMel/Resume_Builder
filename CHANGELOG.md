@@ -24,6 +24,10 @@ All notable changes to this project will be documented in this file.
 - Fix: Median-based blank line density with max 2 cap [TASK-035.2]
 - Core: DOCX styled HTML extraction for bold/italic/underline [TASK-035.2]
 - Fix: Restore PDF/DOCX upload via awaited vendor loaders with readiness gates [TASK-035.3]
+- Core: DOCX styled view (bold/italic/underline) with contenteditable editor [TASK-035.4 R4]
+- Core: Heading spacing engine with R2 clamp (max 2 blank lines) [TASK-035.4 R5]
+- UI: ↠ alignment marker toggle with localStorage persistence [TASK-035.4 O8]
+- Core: ALL-CAPS heading detection (SUMMARY, EXPERIENCE, etc.) [TASK-035.4 O10]
 
 ## [2026-01-11] - Agent Session 8
 
