@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Fix: Strict ↠ gating (6 confidence gates) to eliminate false positives [TASK-035.2]
 - Fix: Median-based blank line density with max 2 cap [TASK-035.2]
 - Core: DOCX styled HTML extraction for bold/italic/underline [TASK-035.2]
+- Fix: Restore PDF/DOCX upload via awaited vendor loaders with readiness gates [TASK-035.3]
 
 ## [2026-01-11] - Agent Session 8
 

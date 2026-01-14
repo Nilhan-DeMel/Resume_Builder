@@ -1,19 +1,102 @@
 import { FILE_TYPES } from '../utils/constants.js';
 
-// Load vendor scripts dynamically
+// Vendor script paths (relative to server root)
 const PDFJS_SRC = '/vendor/pdfjs/pdf.min.js';
 const PDFJS_WORKER_SRC = '/vendor/pdfjs/pdf.worker.min.js';
 const MAMMOTH_SRC = '/vendor/mammoth/mammoth.browser.min.js';
 
+// Track loading state to prevent duplicate loads
+const loadingPromises = {};
+
+/**
+ * Load a script and wait for it to be ready
+ * @param {string} src - Script path
+ * @returns {Promise<void>}
+ */
 async function loadScript(src) {
-    if (document.querySelector(`script[src="${src}"]`)) return;
-    return new Promise((resolve, reject) => {
+    // If already loading, wait for that promise
+    if (loadingPromises[src]) {
+        return loadingPromises[src];
+    }
+
+    // If script tag exists and is loaded, return immediately
+    const existingScript = document.querySelector(`script[src="${src}"]`);
+    if (existingScript && existingScript.dataset.loaded === 'true') {
+        return Promise.resolve();
+    }
+
+    // Create new loading promise
+    loadingPromises[src] = new Promise((resolve, reject) => {
+        // Remove any existing failed script
+        if (existingScript) {
+            existingScript.remove();
+        }
+
         const script = document.createElement('script');
         script.src = src;
-        script.onload = resolve;
-        script.onerror = reject;
+        script.onload = () => {
+            script.dataset.loaded = 'true';
+            console.log(`[VENDOR] Loaded: ${src}`);
+            resolve();
+        };
+        script.onerror = () => {
+            delete loadingPromises[src];
+            reject(new Error(`Failed to load vendor script: ${src}`));
+        };
         document.head.appendChild(script);
     });
+
+    return loadingPromises[src];
+}
+
+/**
+ * Ensure mammoth.js is ready for use
+ * @returns {Promise<void>}
+ * @throws {Error} if mammoth fails to load or is missing expected functions
+ */
+async function ensureMammothReady() {
+    await loadScript(MAMMOTH_SRC);
+
+    // Verify global exists
+    if (typeof window.mammoth === 'undefined') {
+        throw new Error('Mammoth library failed to initialize (window.mammoth is undefined)');
+    }
+
+    // Verify required functions exist
+    if (typeof window.mammoth.convertToHtml !== 'function') {
+        throw new Error('Mammoth library is corrupted (convertToHtml not found)');
+    }
+    if (typeof window.mammoth.extractRawText !== 'function') {
+        throw new Error('Mammoth library is corrupted (extractRawText not found)');
+    }
+
+    console.log('[VENDOR] Mammoth ready:', typeof window.mammoth);
+}
+
+/**
+ * Ensure pdf.js is ready for use
+ * @returns {Promise<void>}
+ * @throws {Error} if pdf.js fails to load or is missing expected functions
+ */
+async function ensurePdfJsReady() {
+    await loadScript(PDFJS_SRC);
+
+    // Verify global exists
+    if (typeof window.pdfjsLib === 'undefined') {
+        throw new Error('PDF.js library failed to initialize (window.pdfjsLib is undefined)');
+    }
+
+    // Verify required functions exist
+    if (typeof window.pdfjsLib.getDocument !== 'function') {
+        throw new Error('PDF.js library is corrupted (getDocument not found)');
+    }
+
+    // Set worker path
+    if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_SRC;
+    }
+
+    console.log('[VENDOR] PDF.js ready:', typeof window.pdfjsLib);
 }
 
 /**
@@ -57,10 +140,8 @@ async function extractFromText(file) {
 }
 
 async function extractFromPDF(file) {
-    await loadScript(PDFJS_SRC);
-    if (!window.pdfjsLib.GlobalWorkerOptions.workerSrc) {
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_SRC;
-    }
+    // Use readiness gate to ensure pdf.js is properly loaded
+    await ensurePdfJsReady();
 
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -286,7 +367,8 @@ function checkArrowConfidence(leftItems, rightItems, leftText, rightText, leftMa
 }
 
 async function extractFromWord(file) {
-    await loadScript(MAMMOTH_SRC);
+    // Use readiness gate to ensure mammoth.js is properly loaded
+    await ensureMammothReady();
     const arrayBuffer = await file.arrayBuffer();
 
     // Extract styled HTML for display (R4: Style Fidelity)
