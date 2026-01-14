@@ -258,17 +258,22 @@ async function extractFromPDF(file) {
 }
 
 /**
- * Build line text with STRICT ↠ detection per FIDELITY_RULES v1.1
- * R3: Only emit ↠ when ALL confidence gates pass
+ * Build line text with SMART ↠ detection per FIDELITY_RULES v1.3
+ * 
+ * Detects two cases:
+ * 1. RIGHT-ALIGNED LINE: All items start far right → prefix "↠ <text>"
+ * 2. MIXED LINE TAIL: Left cluster + gap + right cluster → "<left>  ↠ <right>"
  */
 function buildLineWithStrictArrowDetection(lineItems, pageWidth, config) {
+    const rightMarginThreshold = pageWidth * config.rightMarginPct; // 70% for right cluster
+    const centerThreshold = pageWidth * 0.55; // 55% for right-aligned line detection
     const leftMargin = pageWidth * config.leftMarginPct;
-    const rightMargin = pageWidth * config.rightMarginPct;
     const minGap = pageWidth * config.minGapPct;
 
-    // Separate potential left and right clusters
-    const leftItems = lineItems.filter(item => item.x < rightMargin);
-    const rightItems = lineItems.filter(item => item.x >= rightMargin);
+    // Compute line metrics
+    const xMin = Math.min(...lineItems.map(i => i.x));
+    const xMax = Math.max(...lineItems.map(i => i.x + (i.width || 0)));
+    const rightGap = pageWidth - xMax;
 
     // Join tokens helper
     const joinTokens = (items) => {
@@ -287,28 +292,62 @@ function buildLineWithStrictArrowDetection(lineItems, pageWidth, config) {
         return result;
     };
 
+    const fullText = joinTokens(lineItems);
+    const charCount = fullText.length;
+
+    // ===== CASE 1: RIGHT-ALIGNED LINE (prefix ↠) =====
+    // Line starts far right (past 55% of page width) AND is short
+    const isRightAlignedLine =
+        xMin > centerThreshold &&
+        charCount <= 60 &&
+        !isLikelyParagraph(fullText);
+
+    if (isRightAlignedLine) {
+        console.log(`[TRACE_PDF:RA_LINE] xMin=${xMin.toFixed(1)} centerThresh=${centerThreshold.toFixed(1)} chars=${charCount} → "↠ ${fullText.substring(0, 40)}..."`);
+        return `↠ ${fullText}`;
+    }
+
+    // ===== CASE 2: MIXED LINE WITH TAIL SEGMENT =====
+    // Separate potential left and right clusters
+    const leftItems = lineItems.filter(item => item.x < rightMarginThreshold);
+    const rightItems = lineItems.filter(item => item.x >= rightMarginThreshold);
+
     const leftText = joinTokens(leftItems);
     const rightText = joinTokens(rightItems);
 
-    // ===== STRICT ↠ GATING (R3) =====
     if (rightText && leftText) {
         const shouldEmitArrow = checkArrowConfidence(leftItems, rightItems, leftText, rightText, leftMargin, minGap, config);
 
         if (shouldEmitArrow) {
-            console.log(`[FIDELITY:ARROW] PASS: "${leftText}" ↠ "${rightText}"`);
+            console.log(`[TRACE_PDF:RA_TAIL] PASS: "${leftText}" ↠ "${rightText}"`);
             return `${leftText}  ↠ ${rightText}`;
         } else {
-            console.log(`[FIDELITY:ARROW] REJECT: Merging "${leftText}" + "${rightText}"`);
-            // No arrow - just join as continuous text
-            return joinTokens(lineItems);
+            console.log(`[TRACE_PDF:RA_NONE] Merged: "${fullText.substring(0, 60)}..."`);
+            return fullText;
         }
     } else if (rightText) {
-        // Only right text, no left - likely just regular text
-        // R3: ↠ requires BOTH clusters, so no arrow
+        // Only right items but didn't match Case 1 criteria
+        // (longer text or paragraph-like)
+        console.log(`[TRACE_PDF:RA_SKIP] Right-only but not short enough: "${rightText.substring(0, 40)}..."`);
         return rightText;
     }
 
     return leftText;
+}
+
+/**
+ * Check if text looks like a paragraph (not suitable for ↠)
+ */
+function isLikelyParagraph(text) {
+    if (!text) return false;
+    const words = text.split(/\s+/).length;
+    // More than 10 words is likely a paragraph
+    if (words > 10) return true;
+    // Ends with common sentence endings
+    if (/\.\s*$/.test(text) && words > 5) return true;
+    // Contains sentence-continuation patterns
+    if (/\b(the|and|or|but|which|that|this|these|those|with|from)\s/i.test(text) && words > 6) return true;
+    return false;
 }
 
 /**

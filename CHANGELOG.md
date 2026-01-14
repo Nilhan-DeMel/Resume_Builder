@@ -28,6 +28,8 @@ All notable changes to this project will be documented in this file.
 - Core: Heading spacing engine with R2 clamp (max 2 blank lines) [TASK-035.4 R5]
 - UI: ↠ alignment marker toggle with localStorage persistence [TASK-035.4 O8]
 - Core: ALL-CAPS heading detection (SUMMARY, EXPERIENCE, etc.) [TASK-035.4 O10]
+- Fix: PDF ↠ right-aligned LINE detection (xMin > 55% page width) [TASK-035.5]
+- UI: Remove ATS Check panel and expand editor to full width [TASK-035.5]
 
 ## [2026-01-11] - Agent Session 8
 
