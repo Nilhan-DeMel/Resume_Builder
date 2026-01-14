@@ -30,6 +30,7 @@ All notable changes to this project will be documented in this file.
 - Core: ALL-CAPS heading detection (SUMMARY, EXPERIENCE, etc.) [TASK-035.4 O10]
 - Fix: PDF ↠ right-aligned LINE detection (xMin > 55% page width) [TASK-035.5]
 - UI: Remove ATS Check panel and expand editor to full width [TASK-035.5]
+- Audit: Forensic GitHub cleanup investigation & Integrity Policy [TASK-037]
 
 ## [2026-01-11] - Agent Session 8
 
