@@ -5,7 +5,7 @@ Agent: Antigravity
 
 ## Summary
 
-Fixed missing ↠ markers in PDF output and removed ATS panel.
+Fixed missing ↠ markers in PDF output, added PDF style capture, removed ATS panel, and created Rules Spec v1.3.
 
 ---
 
@@ -44,30 +44,31 @@ Added two detection cases:
 - Ends with period + >5 words → sentence
 - Contains "the", "and", "or" patterns + >6 words → continuation
 
-**Evidence**: textExtractor.js lines 289-301 (after fix):
+**Evidence**: textExtractor.js lines 289-301 (after fix)
 
-```javascript
-const isRightAlignedLine = 
-    xMin > centerThreshold && 
-    charCount <= 60 &&
-    !isLikelyParagraph(fullText);
+### Phase 3: PDF Style Capture
 
-if (isRightAlignedLine) {
-    console.log(`[TRACE_PDF:RA_LINE] xMin=${xMin.toFixed(1)} ...`);
-    return `↠ ${fullText}`;
-}
-```
+Added fontName extraction to PDF items:
+
+- `isBold = /Bold|Black|Heavy/i.test(fontName)`
+- `isItalic = /Italic|Oblique/i.test(fontName)`
+- Stored per item for future styled PDF view
+
+**Evidence**: textExtractor.js lines 172-179
+
+### Phase 4: Rules Spec v1.3
+
+Created `docs/specs/FIDELITY_RENDERING_RULES_v1.3.md`:
+
+- Documents R3 v1.3 (RA_LINE detection)
+- Documents R7 v1.3 (PDF style capture)
+- Authoritative reference for all fidelity rules
 
 ### Phase 5: ATS Panel Removed
 
-Removed `editor-sidebar` with ATS Check panel from `index.html`.
-Set `editor-main` to `width: 100%`.
+Removed `editor-sidebar` from `index.html`, set editor to full width.
 
-**Evidence**: index.html line 111 (after fix):
-
-```html
-<div class="editor-main" style="width: 100%;">
-```
+**Evidence**: index.html line 111
 
 ---
 
@@ -75,9 +76,9 @@ Set `editor-main` to `width: 100%`.
 
 | File | Change |
 |------|--------|
-| `src/js/upload/textExtractor.js` | Added right-aligned LINE detection + isLikelyParagraph |
+| `src/js/upload/textExtractor.js` | RA_LINE detection + isLikelyParagraph + fontName extraction |
 | `src/index.html` | Removed ATS panel, expanded editor |
-| `docs/agent/REPORT_TASK-035.5.md` | This file |
+| `docs/specs/FIDELITY_RENDERING_RULES_v1.3.md` | NEW - Authoritative rules spec |
 
 ---
 
@@ -93,3 +94,4 @@ All 11 checks pass.
 2. ↠ toggle ON/OFF → markers show/hide ✅
 3. No ↠ in paragraph sentences ✅
 4. ATS panel removed, editor wider ✅
+5. PDF fontName captured (check items in code) ✅
