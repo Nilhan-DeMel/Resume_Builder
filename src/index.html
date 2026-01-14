@@ -106,21 +106,14 @@
     <div data-view="editor" class="view hidden">
         <div class="container">
             <h1>Review & Edit</h1>
-            <!-- Editor UI -->
+            <!-- Editor UI: Full width (ATS panel removed per TASK-035.5) -->
             <div class="editor-container">
-                <div class="editor-main">
+                <div class="editor-main" style="width: 100%;">
                     <div class="editor-toolbar">
                         <button class="btn btn-small btn-secondary">Undo</button>
                         <button class="btn btn-small btn-secondary">Redo</button>
                     </div>
                     <textarea class="editor-content" spellcheck="false">Editor content placeholder...</textarea>
-                </div>
-                <div class="editor-sidebar">
-                    <div class="card">
-                        <h3>ATS Check</h3>
-                        <div class="validation-item valid">✓ Standard Fonts</div>
-                        <div class="validation-item invalid">⚠ Missing Sections</div>
-                    </div>
                 </div>
             </div>
         </div>
