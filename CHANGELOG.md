@@ -31,6 +31,7 @@ All notable changes to this project will be documented in this file.
 - Fix: PDF ↠ right-aligned LINE detection (xMin > 55% page width) [TASK-035.5]
 - UI: Remove ATS Check panel and expand editor to full width [TASK-035.5]
 - Audit: Forensic GitHub cleanup investigation & Integrity Policy [TASK-037]
+- Cleanup: Executed "Perfect Order" plan, fixed CI IPv6 issue, deleted stale branches [TASK-037.1]
 
 ## [2026-01-11] - Agent Session 8
 
