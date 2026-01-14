@@ -165,15 +165,22 @@ async function extractFromPDF(file) {
         const viewport = page.getViewport({ scale: 1.0 });
         const pageWidth = viewport.width;
 
-        // Extract items with coordinates
+        // Extract items with coordinates AND style hints (TASK-035.5 Phase 3)
         const items = textContent.items
             .filter(item => item.str && item.str.trim())
-            .map(item => ({
-                str: item.str,
-                x: item.transform[4],
-                y: item.transform[5],
-                width: item.width || 0
-            }));
+            .map(item => {
+                const fontName = item.fontName || '';
+                return {
+                    str: item.str,
+                    x: item.transform[4],
+                    y: item.transform[5],
+                    width: item.width || 0,
+                    // Style detection from fontName
+                    isBold: /Bold|Black|Heavy/i.test(fontName),
+                    isItalic: /Italic|Oblique/i.test(fontName),
+                    fontName: fontName
+                };
+            });
 
         if (!items.length) continue;
 
