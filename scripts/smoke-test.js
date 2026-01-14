@@ -7,7 +7,7 @@ const http = require('http');
 const { spawn } = require('child_process');
 
 const PORT = 8000;
-const BASE_URL = `http://localhost:${PORT}`;
+const BASE_URL = `http://127.0.0.1:${PORT}`;
 
 // Artifacts to check
 const CHECKS = [
