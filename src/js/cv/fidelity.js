@@ -3,8 +3,10 @@
  * Purpose: Render CV text in exact extraction order without restructuring
  * 
  * TASK-035: This module bypasses all AI/canonicalization/labeling.
- * The output is the raw extracted text with minimal normalization.
+ * TASK-035.4: Added R5 heading spacing + O10 ALL-CAPS detection
  */
+
+import { processTextWithSpacing, clampBlankLines } from './fidelitySpacing.js';
 
 /**
  * Minimal normalization for fidelity mode
@@ -88,15 +90,27 @@ export function buildPdfReadingOrderText(pdfItems) {
 
 /**
  * Convert extracted content to fidelity text
+ * TASK-035.4: Now applies R5 heading spacing + O10 ALL-CAPS
+ * 
  * @param {Object} params - { fileType, extractedText, pdfItems }
  * @returns {string} Fidelity text (exact order, no structuring)
  */
 export function toFidelityText({ fileType, extractedText, pdfItems }) {
+    let text;
+
     // For PDF with items array, use reading order builder
     if (pdfItems && pdfItems.length) {
-        return buildPdfReadingOrderText(pdfItems);
+        text = buildPdfReadingOrderText(pdfItems);
+    } else {
+        // For TXT/DOCX, use minimal normalization
+        text = normalizeMinimal(extractedText);
     }
 
-    // For TXT/DOCX or PDF without items, use minimal normalization
-    return normalizeMinimal(extractedText);
+    // R5 + O10: Apply heading spacing (detects ALL-CAPS headings for TXT)
+    text = processTextWithSpacing(text);
+
+    // R2: Final clamp to ensure no 3+ blank lines
+    text = clampBlankLines(text);
+
+    return text;
 }
