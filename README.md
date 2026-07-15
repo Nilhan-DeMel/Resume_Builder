@@ -1,121 +1,51 @@
-# Resume_Builder
+# Resume Builder
 
-**A Resume Builder Application developed, maintained, and operated exclusively by AI agents.**
+> A browser-based CV ingestion, normalization, ATS-oriented editing, and export prototype designed for stateless AI-agent maintenance.
 
-## Overview
+Resume Builder explores a difficult document-engineering problem: accepting PDF, DOCX, pasted, or plain-text CV content; preserving useful structure; converting it into a canonical model; and producing editable, downloadable output. The repository also treats agent handoff as an engineering concern, with operating contracts, task history, forensic reports, rollback guidance, and cross-platform verification scripts.
 
-Resume_Builder is a web-based application designed to help users create professional resumes. It is built with a unique constraint: **No human manually edits or merges code changes; agents perform all repo modifications.** All development is handled by stateless AI agents who "fly in," understand the context from this repository, make improvements, and "fly out."
+## Implemented capabilities
 
-## Status
+- PDF and DOCX text extraction using vendored browser libraries.
+- Fidelity-aware reading-order and line-preservation logic.
+- Canonical CV parsing with a deterministic heuristic fallback.
+- ATS-oriented labeling, prompt construction, optimization adapters, and editor rendering.
+- Plain and styled editing modes with HTML sanitization.
+- PDF/DOCX download paths, local state, validation, loading, and toast UI modules.
+- Demo mode for exercising the interface without provider credentials.
+- Supabase/Firebase integration adapters and setup documentation.
+- Cross-platform environment, configuration, and HTTP smoke checks.
 
-- **Current Version**: 0.1.0 (Initialization)
-- **Status**: Foundation set. Basic structure created. App logic pending.
-- **Test Coverage**: 0% (None yet)
+> [!NOTE]
+> External authentication, hosting, and AI services require separate configuration. Demo mode is the default. Production AI calls should be routed through a server-side boundary; provider secrets must never be embedded in browser JavaScript.
 
-## How to Run
-
-**Important**: This app requires a web server to run (ES6 modules).
-
-### Quick Start
-
-**Windows (PowerShell):**
+## Run locally
 
 ```powershell
-# 1. Verify Environment
-.\scripts\test.ps1
-
-# 2. Run Application
-.\scripts\run.ps1
-```
-
-**Mac/Linux (Bash):**
-
-```bash
-# 1. Verify Environment
-./scripts/test.sh
-
-# 2. Run Application
-./scripts/run.sh
-```
-
-This will start a local development server and tell you which URL to open.
-
-**Default URL**: <http://localhost:8000>
-
-### Manual Server Start
-
-If the script doesn't work, start a server manually:
-
-**With Python 3:**
-
-```bash
-cd src
-python3 -m http.server 8000
-```
-
-**With Node.js:**
-
-```bash
-cd src
-npx http-server -p 8000
-```
-
-Then open <http://localhost:8000> in your browser.
-
-## Quick Start for Agents
-
-## Demo Mode
-
-The application includes a demo mode for testing without API keys:
-
-1. Ensure `DEMO_MODE = true` in `src/js/config/demo.js` (default)
-2. Run `.\scripts\run.ps1` (Windows) or `./scripts/run.sh` (Mac/Linux)
-3. Test the full UI workflow with mock data
-
-See `QUICK_START.md` for details.
-
-```bash
-# Setup (first time only)
-# Windows:
 .\scripts\setup.ps1
-# Mac/Linux:
-./scripts/setup.sh
-
-# Run the application
-# Windows:
 .\scripts\run.ps1
-# Mac/Linux:
-./scripts/run.sh
-
-# Run tests
-# Windows:
 .\scripts\test.ps1
-# Mac/Linux:
+```
+
+```bash
+./scripts/setup.sh
+./scripts/run.sh
 ./scripts/test.sh
 ```
 
-## Configuration Checklist
+The default development URL is <http://localhost:8000>.
 
-Before running the application, you need to configure:
+## Start here
 
-- [ ] Supabase (Auth & Database)
-- [ ] Firebase (Hosting)
-- [ ] Anthropic API (AI Processing)
+| Guide | Purpose |
+| --- | --- |
+| [Engineering overview](ENGINEERING_OVERVIEW.md) | Architecture, interesting decisions, and honest boundaries |
+| [Quick start](QUICK_START.md) | Demo and local setup |
+| [Architecture](docs/ARCHITECTURE.md) | Major modules and data flow |
+| [Agent guide](AGENT_GUIDE.md) | Stateless-maintainer operating contract |
+| [Fidelity rules](docs/specs/FIDELITY_RENDERING_RULES_v1.3.md) | Document-preservation specification |
+| [API integration](docs/API_INTEGRATION.md) | External-service boundaries |
 
-Run `.\scripts\configure.ps1` (Windows) or `./scripts/configure.sh` (Mac/Linux) to see configuration instructions.
+## Project status
 
-See `QUICK_START.md` for detailed setup guide.
-
-## Architecture
-
-- **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+).
-- **State**: Currently runs locally in the browser.
-- **Design System**: To be defined.
-
-## For Agents
-
-If you are an AI agent reading this:
-
-1. **READ** `AGENT_GUIDE.md` immediately. It contains your operating instructions.
-2. **READ** `docs/CONTEXT.md` to understand the current work in progress.
-3. **CHECK** `CHANGELOG.md` for recent history.
+This is a substantial prototype, not a hosted production service. Core browser modules and smoke checks are present; real provider integrations, security review, and end-to-end document fidelity still require environment-specific validation.

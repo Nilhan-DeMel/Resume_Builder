@@ -32,25 +32,29 @@ let serverProcess = null;
 
 async function startServer() {
     console.log('Starting temporary server...');
-    // Try Python first (per environment preference)
-    return new Promise((resolve, reject) => {
-        const python = spawn('python3', ['-m', 'http.server', PORT], { cwd: 'src' });
+    const candidates = process.platform === 'win32'
+        ? [['python', ['-m', 'http.server', PORT]], ['py', ['-3', '-m', 'http.server', PORT]]]
+        : [['python3', ['-m', 'http.server', PORT]], ['python', ['-m', 'http.server', PORT]]];
 
-        python.stdout.on('data', (data) => { if (data.toString().includes('Serving')) resolve(python); });
-        python.stderr.on('data', (data) => { if (data.toString().includes('Serving')) resolve(python); });
+    for (const [command, args] of candidates) {
+        const child = spawn(command, args, { cwd: 'src', stdio: 'ignore' });
+        serverProcess = child;
 
-        // Fallback to 'python' if 'python3' fails immediately
-        python.on('error', () => {
-            const python2 = spawn('python', ['-m', 'http.server', PORT], { cwd: 'src' });
-            python2.stdout.on('data', (data) => { if (data.toString().includes('Serving')) resolve(python2); });
-            python2.stderr.on('data', (data) => { if (data.toString().includes('Serving')) resolve(python2); });
-            serverProcess = python2;
-        });
+        for (let attempt = 0; attempt < 20; attempt += 1) {
+            if (child.exitCode !== null) break;
+            try {
+                await fetchUrl('/');
+                return child;
+            } catch {
+                await new Promise((resolve) => setTimeout(resolve, 150));
+            }
+        }
 
-        serverProcess = python;
-        // Give it 2 seconds to fail or succeed if stdout is silent
-        setTimeout(() => resolve(serverProcess), 2000);
-    });
+        if (child.exitCode === null) child.kill();
+    }
+
+    serverProcess = null;
+    throw new Error('Unable to start a local Python HTTP server.');
 }
 
 function fetchUrl(path) {
